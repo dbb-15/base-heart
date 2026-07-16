@@ -78,38 +78,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     });
   }, [setAccessToken, clearSession]);
 
-  // Bootstrap: carrega token do storage e tenta /auth/me.
+  // TEMP: login desativado — auto-autentica com usuário mock ADMIN
+  // para desbloquear navegação enquanto o backend não está disponível.
   useEffect(() => {
-    let cancelled = false;
-    const initial = readInitialToken();
-    tokenRef.current = initial;
-
-    (async () => {
-      if (!initial) {
-        if (!cancelled) setState({ user: null, accessToken: null, status: "unauthenticated" });
-        return;
-      }
-      try {
-        const user = await authService.me();
-        if (!cancelled) {
-          setState({ user, accessToken: initial, status: "authenticated" });
-        }
-      } catch (err) {
-        if (!cancelled) {
-          if (err instanceof ApiError && err.status === 401) {
-            clearSession();
-          } else {
-            // Backend indisponível: mantém unauth para não travar UI.
-            setState({ user: null, accessToken: null, status: "unauthenticated" });
-          }
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
+    const mockUser: User = {
+      id: "dev-user",
+      nome: "Dev Admin",
+      email: "dev@alias.local",
+      role: "admin",
     };
-  }, [clearSession]);
+    const token = "dev-mock-token";
+    tokenRef.current = token;
+    setState({ user: mockUser, accessToken: token, status: "authenticated" });
+  }, []);
 
   const login = useCallback<SessionContextValue["login"]>(
     async (payload) => {
