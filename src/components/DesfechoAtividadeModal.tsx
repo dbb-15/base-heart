@@ -435,18 +435,27 @@ export function DesfechoAtividadeModal({
   }
 
   function handlePick(o: Outcome) {
-    // Perda entra no fluxo de motivo
     if (o.resultado === "LOST") {
       setSelected(o);
       return;
     }
-    // Outcomes que exigem data (negociação) — seleciona e mostra input
-    if (o.requiresDate) {
+    if (o.requiresDate || o.requiresUfs) {
       setSelected(o);
       return;
     }
-    // Sondagem: só permite avançar se marcou algo (form abaixo)
     submit(o, isSondagem ? { dadosQualificacao: buildSondagemPayload() } : undefined);
+  }
+
+  function confirmarComUfs() {
+    if (!selected) return;
+    if (ufsSel.length === 0) {
+      setUfsError("Selecione ao menos uma UF.");
+      return;
+    }
+    setUfsError(null);
+    submit(selected, {
+      dadosQualificacao: { ufsRealizadas: ufsSel, ufsNegociadas: ufsSel },
+    });
   }
 
   function buildSondagemPayload(): Record<string, unknown> {
