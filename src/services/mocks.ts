@@ -47,6 +47,81 @@ export const MOCK_OPORTUNIDADES: OportunidadeListItem[] = [
     contaId: "mock-conta-2",
     criadaEm: new Date(Date.now() - 10 * 86400_000).toISOString(),
   },
+  // Expansão — Mapeamento
+  {
+    id: "mock-exp-1",
+    pipeline: "EXPANSAO",
+    produto: "E_REGISTRO",
+    estagio: "MAPEAMENTO",
+    status: "ABERTA",
+    tipoExpansao: null,
+    valorEstimadoMensal: 7200,
+    conta: {
+      id: "mock-conta-cli-1",
+      nomeFantasia: "Vega",
+      razaoSocial: "Banco Vega S.A.",
+      status: "CLIENTE",
+    },
+    owner: { id: "dev-user", nome: "Você (mock)" },
+    ownerId: "dev-user",
+    contaId: "mock-conta-cli-1",
+  },
+  // Expansão UF em Negociação
+  {
+    id: "mock-exp-2",
+    pipeline: "EXPANSAO",
+    produto: "E_REGISTRO",
+    estagio: "NEGOCIACAO",
+    status: "ABERTA",
+    tipoExpansao: "UF",
+    valorEstimadoMensal: 15400,
+    conta: {
+      id: "mock-conta-cli-2",
+      nomeFantasia: "CoopSolar",
+      razaoSocial: "Cooperativa Solar",
+      status: "CLIENTE",
+    },
+    owner: { id: "dev-user", nome: "Você (mock)" },
+    ownerId: "dev-user",
+    contaId: "mock-conta-cli-2",
+  },
+  // Expansão VOLUME em Em contato
+  {
+    id: "mock-exp-3",
+    pipeline: "EXPANSAO",
+    produto: "E_BUSCAR",
+    estagio: "EM_CONTATO",
+    status: "ABERTA",
+    tipoExpansao: "VOLUME",
+    valorEstimadoMensal: 9800,
+    conta: {
+      id: "mock-conta-cli-3",
+      nomeFantasia: "Nova Era",
+      razaoSocial: "Consórcio Nova Era",
+      status: "CLIENTE",
+    },
+    owner: { id: "dev-user", nome: "Você (mock)" },
+    ownerId: "dev-user",
+    contaId: "mock-conta-cli-3",
+  },
+  // Expansão Standby
+  {
+    id: "mock-exp-4",
+    pipeline: "EXPANSAO",
+    produto: "E_REGISTRO",
+    estagio: "STANDBY",
+    status: "ABERTA",
+    tipoExpansao: "STANDBY",
+    conta: {
+      id: "mock-conta-cli-1",
+      nomeFantasia: "Vega",
+      razaoSocial: "Banco Vega S.A.",
+      status: "CLIENTE",
+    },
+    owner: { id: "dev-user", nome: "Você (mock)" },
+    ownerId: "dev-user",
+    contaId: "mock-conta-cli-1",
+  },
 ];
 
 export const MOCK_ATIVIDADES: Record<string, AtividadeListItem[]> = {
