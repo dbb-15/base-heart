@@ -16,6 +16,7 @@ import { GruposPage } from "../pages/GruposPage";
 import { AdminPage } from "../pages/AdminPage";
 import { ConfiguracoesPage } from "../pages/ConfiguracoesPage";
 import { OperacoesPage } from "../pages/OperacoesPage";
+import { RelatoriosPage } from "../pages/RelatoriosPage";
 
 function Router() {
   const route = useHashRoute();

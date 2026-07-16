@@ -17,6 +17,7 @@ const NAV: NavItem[] = [
   { path: "/funil", label: NAV_LABEL.funil, roles: ["admin", "gestor", "corretor"] },
   { path: "/operacoes", label: NAV_LABEL.operacoes, roles: ["admin", "gestor", "operacoes"] },
   { path: "/atividades", label: NAV_LABEL.atividades },
+  { path: "/relatorios", label: "Relatórios", roles: ["admin", "gestor"] },
   { path: "/admin", label: NAV_LABEL.admin, roles: ["admin"] },
   { path: "/configuracoes", label: NAV_LABEL.configuracoes, roles: ["admin", "gestor"] },
 
