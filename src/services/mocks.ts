@@ -122,7 +122,47 @@ export const MOCK_OPORTUNIDADES: OportunidadeListItem[] = [
     ownerId: "dev-user",
     contaId: "mock-conta-cli-1",
   },
+  // Operações — Cadastro
+  {
+    id: "mock-ops-1",
+    pipeline: "OPERACOES",
+    produto: "E_REGISTRO",
+    estagio: "CADASTRO",
+    status: "ABERTA",
+    conta: {
+      id: "mock-conta-1",
+      nomeFantasia: "Banco Modelo S.A.",
+      razaoSocial: "Banco Modelo Sociedade Anônima",
+      status: "CLIENTE",
+    },
+    owner: { id: "dev-user", nome: "Ops (mock)" },
+    ownerId: "dev-user",
+    contaId: "mock-conta-1",
+    criadaEm: new Date(Date.now() - 1 * 86400_000).toISOString(),
+  },
+  {
+    id: "mock-ops-2",
+    pipeline: "OPERACOES",
+    produto: "E_BUSCAR",
+    estagio: "CADASTRO_REALIZADO",
+    status: "ABERTA",
+    conta: {
+      id: "mock-conta-cli-2",
+      nomeFantasia: "CoopSolar",
+      razaoSocial: "Cooperativa Solar",
+      status: "CLIENTE",
+    },
+    owner: { id: "dev-user", nome: "Ops (mock)" },
+    ownerId: "dev-user",
+    contaId: "mock-conta-cli-2",
+  },
 ];
+
+// Origem comercial das opps de operações (para link "opp origem")
+export const MOCK_OPS_ORIGEM: Record<string, string> = {
+  "mock-ops-1": "mock-001",
+  "mock-ops-2": "mock-exp-2",
+};
 
 export const MOCK_ATIVIDADES: Record<string, AtividadeListItem[]> = {
   [MOCK_OPP_ID]: [

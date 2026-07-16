@@ -14,9 +14,9 @@ import {
   ContaDetailPage,
   GruposPage,
   NotFoundPage,
-  OperacoesPage,
   RegistradorasPage,
 } from "../pages/placeholders";
+import { OperacoesPage } from "../pages/OperacoesPage";
 
 function Router() {
   const route = useHashRoute();
