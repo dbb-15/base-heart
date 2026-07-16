@@ -29,36 +29,31 @@ interface Props {
 }
 
 type OutcomeKey =
-  // genéricos
-  | "avancar"
-  | "follow"
-  | "perda"
-  // negociação
-  | "neg_aprovou"
-  | "neg_continua"
-  | "neg_sem_fit"
-  // follow negociação
-  | "fneg_aprovou"
-  | "fneg_continua"
-  | "fneg_sem_fit"
-  // sondagem
-  | "sond_proposta"
-  | "sond_sem_interesse"
-  // recuperação
-  | "rec_reativou"
-  | "rec_tentando"
-  | "rec_sem_interesse"
-  // confirmação início registros
-  | "reg_sim"
-  | "reg_ainda_nao";
+  | "avancar" | "follow" | "perda"
+  | "neg_aprovou" | "neg_continua" | "neg_sem_fit"
+  | "fneg_aprovou" | "fneg_continua" | "fneg_sem_fit"
+  | "sond_proposta" | "sond_sem_interesse"
+  | "rec_reativou" | "rec_tentando" | "rec_sem_interesse"
+  | "reg_sim" | "reg_ainda_nao"
+  // expansão — sondagem
+  | "sondexp_uf" | "sondexp_volume" | "sondexp_standby"
+  // expansão — abordagem volume
+  | "abv_reuniao" | "abv_manter" | "abv_standby"
+  // expansão — reunião volume
+  | "rev_realizada" | "rev_remarcar" | "rev_standby"
+  // expansão — standby
+  | "stb_recuperou" | "stb_em_contato" | "stb_manter"
+  // conferir UFs
+  | "ufs_confirmar";
 
 interface Outcome {
   key: OutcomeKey;
-  variant: "success" | "warn" | "danger";
+  variant: "success" | "primary" | "warn" | "danger";
   title: string;
   subtitle: string;
   resultado: "AVANCAR" | "PERMANECER" | "LOST";
   requiresDate?: boolean;
+  requiresUfs?: boolean;
   criarFollowNegociacao?: boolean;
   criarFollowUp?: boolean;
   metadata?: Record<string, unknown>;
@@ -194,6 +189,124 @@ function outcomesFor(acao: AcaoAtividade): Outcome[] {
           criarFollowUp: true,
         },
       ];
+    case "DESFECHO_SONDAGEM_EXPANSAO":
+      return [
+        {
+          key: "sondexp_uf",
+          variant: "success",
+          title: "Ramo: Aumento de UF",
+          subtitle: "Move para Proposta (UF)",
+          resultado: "PERMANECER",
+          metadata: { tipoExpansao: "UF" },
+        },
+        {
+          key: "sondexp_volume",
+          variant: "primary",
+          title: "Ramo: Aumento de Volume",
+          subtitle: "Move para Sem contato (Volume)",
+          resultado: "PERMANECER",
+          metadata: { tipoExpansao: "VOLUME" },
+        },
+        {
+          key: "sondexp_standby",
+          variant: "warn",
+          title: "Standby",
+          subtitle: "Sem oportunidade agora — retoma em D+30",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+          metadata: { tipoExpansao: "STANDBY" },
+        },
+      ];
+    case "DESFECHO_ABORDAGEM_VOLUME":
+      return [
+        {
+          key: "abv_reuniao",
+          variant: "success",
+          title: "Marcar reunião",
+          subtitle: "Avança para Em contato / agenda reunião",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "abv_manter",
+          variant: "warn",
+          title: "Manter contato",
+          subtitle: "Cria novo follow-up de abordagem",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+        {
+          key: "abv_standby",
+          variant: "warn",
+          title: "Standby",
+          subtitle: "Sem interesse imediato — retoma depois",
+          resultado: "PERMANECER",
+          metadata: { moverParaStandby: true },
+        },
+      ];
+    case "DESFECHO_REUNIAO_VOLUME":
+      return [
+        {
+          key: "rev_realizada",
+          variant: "success",
+          title: "Reunião realizada",
+          subtitle: "Avança para Negociando",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "rev_remarcar",
+          variant: "warn",
+          title: "Remarcar",
+          subtitle: "Agenda nova reunião",
+          resultado: "PERMANECER",
+          requiresDate: true,
+          criarFollowUp: true,
+        },
+        {
+          key: "rev_standby",
+          variant: "warn",
+          title: "Standby",
+          subtitle: "Sem interesse agora",
+          resultado: "PERMANECER",
+          metadata: { moverParaStandby: true },
+        },
+      ];
+    case "DESFECHO_STANDBY_EXPANSAO":
+      return [
+        {
+          key: "stb_recuperou",
+          variant: "success",
+          title: "Cliente recuperado",
+          subtitle: "Reabre expansão a partir de Mapeamento",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "stb_em_contato",
+          variant: "warn",
+          title: "Em contato",
+          subtitle: "Retomou conversa — cria follow-up",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+        {
+          key: "stb_manter",
+          variant: "warn",
+          title: "Manter standby",
+          subtitle: "Sem movimento — novo follow em D+30",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+      ];
+    case "CONFERIR_UFS_EXPANSAO":
+      return [
+        {
+          key: "ufs_confirmar",
+          variant: "success",
+          title: "Confirmar UFs realizadas",
+          subtitle: "Selecione as UFs e avance de estágio",
+          resultado: "AVANCAR",
+          requiresUfs: true,
+        },
+      ];
     default:
       return [
         {
@@ -266,6 +379,8 @@ export function DesfechoAtividadeModal({
   const [dataRetorno, setDataRetorno] = useState("");
   const [dataError, setDataError] = useState<string | null>(null);
   const [sondagem, setSondagem] = useState<SondagemState>(SONDAGEM_INICIAL);
+  const [ufsSel, setUfsSel] = useState<string[]>([]);
+  const [ufsError, setUfsError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -279,6 +394,8 @@ export function DesfechoAtividadeModal({
     setDataRetorno("");
     setDataError(null);
     setSondagem(SONDAGEM_INICIAL);
+    setUfsSel([]);
+    setUfsError(null);
     setError(null);
     setSubmitting(false);
   }
@@ -318,18 +435,27 @@ export function DesfechoAtividadeModal({
   }
 
   function handlePick(o: Outcome) {
-    // Perda entra no fluxo de motivo
     if (o.resultado === "LOST") {
       setSelected(o);
       return;
     }
-    // Outcomes que exigem data (negociação) — seleciona e mostra input
-    if (o.requiresDate) {
+    if (o.requiresDate || o.requiresUfs) {
       setSelected(o);
       return;
     }
-    // Sondagem: só permite avançar se marcou algo (form abaixo)
     submit(o, isSondagem ? { dadosQualificacao: buildSondagemPayload() } : undefined);
+  }
+
+  function confirmarComUfs() {
+    if (!selected) return;
+    if (ufsSel.length === 0) {
+      setUfsError("Selecione ao menos uma UF.");
+      return;
+    }
+    setUfsError(null);
+    submit(selected, {
+      dadosQualificacao: { ufsRealizadas: ufsSel, ufsNegociadas: ufsSel },
+    });
   }
 
   function buildSondagemPayload(): Record<string, unknown> {
@@ -385,14 +511,17 @@ export function DesfechoAtividadeModal({
 
   const showingPerda = selected?.resultado === "LOST";
   const showingData = !!selected && selected.requiresDate;
+  const showingUfs = !!selected && selected.requiresUfs;
 
   const subtitle = showingPerda
     ? "Informe o motivo da perda para registrar."
     : showingData
       ? "Escolha a data de retorno para o follow-up."
-      : isSondagem
-        ? "Preencha os dados da sondagem e escolha o desfecho."
-        : "Selecione o desfecho da atividade.";
+      : showingUfs
+        ? "Selecione as UFs realizadas."
+        : isSondagem
+          ? "Preencha os dados da sondagem e escolha o desfecho."
+          : "Selecione o desfecho da atividade.";
 
   return (
     <Modal
@@ -448,6 +577,29 @@ export function DesfechoAtividadeModal({
               {submitting ? "Salvando…" : "Confirmar"}
             </button>
           </>
+        ) : showingUfs ? (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setSelected(null);
+                setUfsError(null);
+                setError(null);
+              }}
+              disabled={submitting}
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
+            >
+              Voltar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarComUfs}
+              disabled={submitting}
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+            >
+              {submitting ? "Salvando…" : "Confirmar"}
+            </button>
+          </>
         ) : (
           <button
             type="button"
@@ -496,6 +648,8 @@ export function DesfechoAtividadeModal({
             ) : null}
           </div>
         </div>
+      ) : showingUfs ? (
+        <UfsPicker value={ufsSel} onChange={setUfsSel} error={ufsError} />
       ) : (
         <div className="space-y-4">
           {isSondagem ? (
@@ -658,6 +812,55 @@ function Field({
         </label>
       </div>
       {children}
+    </div>
+  );
+}
+
+const UFS_BR = [
+  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
+  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
+];
+
+function UfsPicker({
+  value,
+  onChange,
+  error,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  error?: string | null;
+}) {
+  function toggle(uf: string) {
+    const set = new Set(value);
+    if (set.has(uf)) set.delete(uf);
+    else set.add(uf);
+    onChange(Array.from(set));
+  }
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted-foreground">
+        Marque as UFs em que a expansão foi realizada.
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {UFS_BR.map((uf) => {
+          const active = value.includes(uf);
+          return (
+            <button
+              key={uf}
+              type="button"
+              onClick={() => toggle(uf)}
+              className={`rounded-md border px-2 py-1 text-xs font-medium transition ${
+                active
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-background text-foreground hover:bg-muted"
+              }`}
+            >
+              {uf}
+            </button>
+          );
+        })}
+      </div>
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
     </div>
   );
 }

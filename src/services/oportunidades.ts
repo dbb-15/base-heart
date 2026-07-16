@@ -108,18 +108,63 @@ export const oportunidadesService = {
       } else if (atv && input.resultado === "PERMANECER" && input.concluirAtividade) {
         atv.status = "CONCLUIDA";
       }
+      const meta = (input.metadata ?? {}) as Record<string, unknown>;
       if (opp) {
         if (input.resultado === "LOST") opp.status = "CLOSED_LOST";
         else if (input.resultado === "AVANCAR") {
-          // se confirmação de início de registros → Won
-          if (input.metadata && (input.metadata as Record<string, unknown>).iniciouRegistros) {
-            opp.status = "CLOSED_WON";
-          }
+          if (meta.iniciouRegistros) opp.status = "CLOSED_WON";
+        }
+        // Sondagem expansão define ramo + move de estágio
+        if (typeof meta.tipoExpansao === "string") {
+          const t = meta.tipoExpansao as "UF" | "VOLUME" | "STANDBY";
+          opp.tipoExpansao = t;
+          if (t === "UF") opp.estagio = "PROPOSTA";
+          else if (t === "VOLUME") opp.estagio = "SEM_CONTATO";
+          else opp.estagio = "STANDBY";
         }
       }
       return opp ?? ({ id } as OportunidadeListItem);
     }
     return api.post<OportunidadeListItem>(`/oportunidades/${id}/desfecho`, input);
   },
+  create: async (input: {
+    pipeline: Pipeline;
+    contaId: UUID;
+    produto?: Produto;
+    tipoExpansao?: import("../types").TipoExpansao;
+    motivo?: string;
+    valorEstimadoMensal?: number;
+  }) => {
+    // Fallback mock: cria opp local (backend real usa POST /oportunidades)
+    try {
+      return await api.post<OportunidadeListItem>("/oportunidades", input);
+    } catch {
+      const id = `mock-new-${Date.now()}`;
+      const conta = MOCK_OPORTUNIDADES.find((o) => o.contaId === input.contaId)?.conta;
+      const estagio =
+        input.pipeline === "EXPANSAO"
+          ? input.tipoExpansao === "STANDBY"
+            ? "STANDBY"
+            : "MAPEAMENTO"
+          : "PROSPECCAO";
+      const opp: OportunidadeListItem = {
+        id,
+        pipeline: input.pipeline,
+        produto: input.produto ?? null,
+        estagio,
+        status: "ABERTA",
+        tipoExpansao: input.tipoExpansao ?? null,
+        valorEstimadoMensal: input.valorEstimadoMensal ?? null,
+        conta: conta ?? { id: input.contaId, nomeFantasia: "Nova conta" },
+        contaId: input.contaId,
+        owner: { id: "dev-user", nome: "Você (mock)" },
+        ownerId: "dev-user",
+        criadaEm: new Date().toISOString(),
+      };
+      MOCK_OPORTUNIDADES.unshift(opp);
+      return opp;
+    }
+  },
 };
+
 

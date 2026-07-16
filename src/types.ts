@@ -35,15 +35,22 @@ export interface LoginPayload {
 }
 
 // Placeholder domain shapes — refine when wiring real endpoints.
+export type StatusConta = "PROSPECT" | "CLIENTE" | "INATIVO";
+
 export interface Conta {
   id: UUID;
-  nome: string;
+  nome?: string;
+  razaoSocial?: string | null;
+  nomeFantasia?: string | null;
+  cnpj?: string | null;
+  status?: StatusConta;
   documento?: string;
 }
 
 export type Pipeline = "AQUISICAO" | "EXPANSAO" | "OPERACOES";
 export type Produto = "E_REGISTRO" | "E_BUSCAR";
 export type StatusOportunidade = "ABERTA" | "CLOSED_WON" | "CLOSED_LOST";
+export type TipoExpansao = "UF" | "VOLUME" | "STANDBY";
 
 export interface Oportunidade {
   id: UUID;
@@ -63,6 +70,7 @@ export interface ContaRef {
   id: UUID;
   nomeFantasia?: string | null;
   razaoSocial?: string | null;
+  status?: StatusConta;
 }
 
 export interface OportunidadeListItem {
@@ -73,12 +81,14 @@ export interface OportunidadeListItem {
   status: StatusOportunidade;
   valorEstimadoMensal?: number | null;
   previsaoFechamento?: ISODate | null;
+  tipoExpansao?: TipoExpansao | null;
   conta?: ContaRef | null;
   owner?: OwnerRef | null;
   ownerId?: UUID | null;
   contaId: UUID;
   criadaEm?: ISODate;
 }
+
 
 export type StatusAtividade =
   | "PENDENTE"
