@@ -80,6 +80,70 @@ export interface OportunidadeListItem {
   criadaEm?: ISODate;
 }
 
+export type StatusAtividade =
+  | "PENDENTE"
+  | "EM_ANDAMENTO"
+  | "CONCLUIDA"
+  | "IGNORADA"
+  | "CANCELADA";
+
+export type TipoAtividade =
+  | "LIGACAO"
+  | "EMAIL"
+  | "WHATSAPP"
+  | "DEMO"
+  | "REUNIAO"
+  | "TAREFA";
+
+export type AcaoAtividade =
+  | "NENHUMA"
+  | "DESFECHO_PRIMEIRO_CONTATO"
+  | "QUALIFICACAO_FORM"
+  | "DESFECHO_RETORNO_EMAIL"
+  | "DESFECHO_DEMO"
+  | "ANEXAR_PROPOSTA"
+  | "DESFECHO_PROPOSTA"
+  | "DESFECHO_NEGOCIACAO"
+  | "DESFECHO_FOLLOW_NEGOCIACAO"
+  | "CONFERIR_UFS_EXPANSAO"
+  | "DESFECHO_FORMALIZACAO"
+  | "REGISTRAR_CHAMADO_JURIDICO"
+  | "DESFECHO_CHAMADO_JURIDICO"
+  | "DESFECHO_SOLICITACAO_CADASTRO"
+  | "DESFECHO_RECUPERACAO_LEAD"
+  | "DESFECHO_SONDAGEM_EXPANSAO"
+  | "OBSERVAR_FLUXO_EREGISTRO"
+  | "DESFECHO_ABORDAGEM_VOLUME"
+  | "DESFECHO_REUNIAO_VOLUME"
+  | "DESFECHO_STANDBY_EXPANSAO"
+  | "CONFIRMAR_BOAS_VINDAS_OPERACOES"
+  | "DESFECHO_ACOMPANHAMENTO_REGISTROS"
+  | "DESFECHO_CONFIRMACAO_INICIO_REGISTROS"
+  | "CONFIRMAR_RETORNO"
+  | "REGISTRAR_CONTATO"
+  | "REGISTRAR_NOTA";
+
+export interface TemplateItem {
+  acao?: AcaoAtividade;
+  titulo?: string;
+  ordem?: number;
+}
+
+export interface AtividadeListItem {
+  id: UUID;
+  titulo: string;
+  tipo: TipoAtividade;
+  status: StatusAtividade;
+  dataHora?: ISODate | null;
+  obrigatoria?: boolean;
+  metadata?: Record<string, unknown> | null;
+  templateItem?: TemplateItem | null;
+  owner?: OwnerRef | null;
+  oportunidadeId?: UUID;
+  contaId?: UUID;
+}
+
+// Legacy alias — pages antigas.
 export interface Atividade {
   id: UUID;
   oportunidadeId?: UUID;
@@ -87,6 +151,39 @@ export interface Atividade {
   tipo: string;
   descricao: string;
   data: ISODate;
+}
+
+export interface WorkflowItemAtual {
+  atividadeId: UUID;
+  titulo: string;
+  obrigatoria: boolean;
+  concluida: boolean;
+}
+
+export interface WorkflowAtual {
+  estagio: string;
+  totalObrigatorias: number;
+  concluidasObrigatorias: number;
+  pendentes: WorkflowItemAtual[];
+}
+
+export interface Nota {
+  id: UUID;
+  texto: string;
+  criadaEm: ISODate;
+  contatoId?: UUID | null;
+  contatoNome?: string | null;
+  autorNome?: string | null;
+  tipo?: "COMUM" | "CADASTRO_CONTATO" | null;
+}
+
+export interface TimelineItem {
+  id: string;
+  tipo: "ATIVIDADE" | "EVENTO" | "NOTA";
+  titulo: string;
+  descricao?: string;
+  data: ISODate;
+  autorNome?: string | null;
 }
 
 export interface Registradora {
