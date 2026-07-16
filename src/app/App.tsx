@@ -7,15 +7,14 @@ import { HomePage } from "../pages/HomePage";
 import { FunilPage } from "../pages/FunilPage";
 import { OportunidadeDetailPage } from "../pages/OportunidadeDetailPage";
 import {
-  AdminPage,
   AtividadesPage,
-  ConfiguracoesPage,
   NotFoundPage,
-  RegistradorasPage,
 } from "../pages/placeholders";
 import { BasePage } from "../pages/BasePage";
 import { ContaDetailPage } from "../pages/ContaDetailPage";
 import { GruposPage } from "../pages/GruposPage";
+import { AdminPage } from "../pages/AdminPage";
+import { ConfiguracoesPage } from "../pages/ConfiguracoesPage";
 import { OperacoesPage } from "../pages/OperacoesPage";
 
 function Router() {
