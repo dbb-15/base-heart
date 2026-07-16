@@ -1,11 +1,18 @@
-// Modal de desfecho — versão GENÉRICA (Camada 2).
-// - 3 OutcomeCards (avança / continua / perda) por padrão.
-// - Perda em 2 passos: card vermelho → MotivoPerdaSelect → confirmar.
-// - Especializações (sondagem, negociação, follow, expansão) entram em camadas seguintes.
+// Modal de desfecho — Camada 3: especializações críticas.
+// Regras:
+// - DESFECHO_NEGOCIACAO: Aprovou/Continua → PERMANECER + criarFollowNegociacao + dataRetorno.
+//   NUNCA AVANCAR. Sem fit → LOST.
+// - DESFECHO_FOLLOW_NEGOCIACAO: Aprovou → AVANCAR. Continua → novo follow + data.
+//   metadata.acao no follow.
+// - DESFECHO_DEMO: form de sondagem (volume, registradoras, integração, valor,
+//   estados, diferenciais + "não informado") + Quer proposta / Sem interesse.
+// - DESFECHO_RECUPERACAO_LEAD: Reativou / Ainda tentando / Sem interesse.
+// - DESFECHO_CONFIRMACAO_INICIO_REGISTROS: Sim → AVANCAR (backend fecha Won).
 import { useMemo, useState } from "react";
 import { Modal } from "./Modal";
 import { OutcomeCard } from "./OutcomeCard";
 import { MotivoPerdaSelect } from "./MotivoPerdaSelect";
+import { RegistradorasPicker } from "./RegistradorasPicker";
 import type { AcaoAtividade, AtividadeListItem } from "../types";
 import { oportunidadesService } from "../services/oportunidades";
 import type { AplicarDesfechoInput } from "../services/oportunidades";
@@ -18,46 +25,230 @@ interface Props {
   oportunidadeId: string;
   atividade: AtividadeListItem;
   acao: AcaoAtividade;
-  onApplied: () => void; // pai refaz refetch
+  onApplied: () => void;
 }
 
+type OutcomeKey =
+  // genéricos
+  | "avancar"
+  | "follow"
+  | "perda"
+  // negociação
+  | "neg_aprovou"
+  | "neg_continua"
+  | "neg_sem_fit"
+  // follow negociação
+  | "fneg_aprovou"
+  | "fneg_continua"
+  | "fneg_sem_fit"
+  // sondagem
+  | "sond_proposta"
+  | "sond_sem_interesse"
+  // recuperação
+  | "rec_reativou"
+  | "rec_tentando"
+  | "rec_sem_interesse"
+  // confirmação início registros
+  | "reg_sim"
+  | "reg_ainda_nao";
+
 interface Outcome {
-  key: string;
+  key: OutcomeKey;
   variant: "success" | "warn" | "danger";
   title: string;
   subtitle: string;
   resultado: "AVANCAR" | "PERMANECER" | "LOST";
+  requiresDate?: boolean;
+  criarFollowNegociacao?: boolean;
   criarFollowUp?: boolean;
+  metadata?: Record<string, unknown>;
 }
 
-function outcomesFor(_acao: AcaoAtividade): Outcome[] {
-  // Genérico Camada 2 — sempre 3 opções neutras.
-  // Camadas seguintes substituem por textos/lógica específicos por ação.
-  return [
-    {
-      key: "avancar",
-      variant: "success",
-      title: "Resultado positivo",
-      subtitle: "Concluir e avançar no funil",
-      resultado: "AVANCAR",
-    },
-    {
-      key: "follow",
-      variant: "warn",
-      title: "Ainda tentando",
-      subtitle: "Manter no estágio e criar follow-up",
-      resultado: "PERMANECER",
-      criarFollowUp: true,
-    },
-    {
-      key: "perda",
-      variant: "danger",
-      title: "Sem interesse",
-      subtitle: "Registrar perda com motivo",
-      resultado: "LOST",
-    },
-  ];
+function outcomesFor(acao: AcaoAtividade): Outcome[] {
+  switch (acao) {
+    case "DESFECHO_NEGOCIACAO":
+      return [
+        {
+          key: "neg_aprovou",
+          variant: "success",
+          title: "Cliente aprovou condições",
+          subtitle: "Agenda follow-up de negociação com data de retorno",
+          resultado: "PERMANECER",
+          requiresDate: true,
+          criarFollowNegociacao: true,
+          metadata: {
+            acao: "DESFECHO_FOLLOW_NEGOCIACAO",
+            negociacaoResultado: "APROVOU",
+          },
+        },
+        {
+          key: "neg_continua",
+          variant: "warn",
+          title: "Continua negociando",
+          subtitle: "Agenda follow-up de negociação com data de retorno",
+          resultado: "PERMANECER",
+          requiresDate: true,
+          criarFollowNegociacao: true,
+          metadata: {
+            acao: "DESFECHO_FOLLOW_NEGOCIACAO",
+            negociacaoResultado: "CONTINUA",
+          },
+        },
+        {
+          key: "neg_sem_fit",
+          variant: "danger",
+          title: "Sem fit / recusou",
+          subtitle: "Registrar perda com motivo",
+          resultado: "LOST",
+        },
+      ];
+    case "DESFECHO_FOLLOW_NEGOCIACAO":
+      return [
+        {
+          key: "fneg_aprovou",
+          variant: "success",
+          title: "Cliente aprovou",
+          subtitle: "Avançar para Fechamento",
+          resultado: "AVANCAR",
+          metadata: { negociacaoResultado: "APROVOU" },
+        },
+        {
+          key: "fneg_continua",
+          variant: "warn",
+          title: "Continua negociando",
+          subtitle: "Agenda novo follow-up com data",
+          resultado: "PERMANECER",
+          requiresDate: true,
+          criarFollowNegociacao: true,
+          metadata: {
+            acao: "DESFECHO_FOLLOW_NEGOCIACAO",
+            negociacaoResultado: "CONTINUA",
+          },
+        },
+        {
+          key: "fneg_sem_fit",
+          variant: "danger",
+          title: "Sem fit / recusou",
+          subtitle: "Registrar perda com motivo",
+          resultado: "LOST",
+        },
+      ];
+    case "DESFECHO_DEMO":
+      return [
+        {
+          key: "sond_proposta",
+          variant: "success",
+          title: "Cliente quer proposta",
+          subtitle: "Avançar para Proposta",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "sond_sem_interesse",
+          variant: "danger",
+          title: "Sem interesse após sondagem",
+          subtitle: "Registrar perda com motivo",
+          resultado: "LOST",
+        },
+      ];
+    case "DESFECHO_RECUPERACAO_LEAD":
+      return [
+        {
+          key: "rec_reativou",
+          variant: "success",
+          title: "Lead reativou",
+          subtitle: "Reabre no próximo estágio após o da perda",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "rec_tentando",
+          variant: "warn",
+          title: "Ainda tentando",
+          subtitle: "Permanece perdida + novo follow de recuperação",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+        {
+          key: "rec_sem_interesse",
+          variant: "danger",
+          title: "Sem interesse",
+          subtitle: "Permanece perdida (definitivo)",
+          resultado: "LOST",
+        },
+      ];
+    case "DESFECHO_CONFIRMACAO_INICIO_REGISTROS":
+      return [
+        {
+          key: "reg_sim",
+          variant: "success",
+          title: "Sim, cliente iniciou registros",
+          subtitle: "Fecha oportunidade como ganha",
+          resultado: "AVANCAR",
+          metadata: { iniciouRegistros: true },
+        },
+        {
+          key: "reg_ainda_nao",
+          variant: "warn",
+          title: "Ainda não / reagendar",
+          subtitle: "Cria novo acompanhamento",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+      ];
+    default:
+      return [
+        {
+          key: "avancar",
+          variant: "success",
+          title: "Resultado positivo",
+          subtitle: "Concluir e avançar no funil",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "follow",
+          variant: "warn",
+          title: "Ainda tentando",
+          subtitle: "Manter no estágio e criar follow-up",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+        {
+          key: "perda",
+          variant: "danger",
+          title: "Sem interesse",
+          subtitle: "Registrar perda com motivo",
+          resultado: "LOST",
+        },
+      ];
+  }
 }
+
+interface SondagemState {
+  volumeEstimado: string;
+  volumeNaoInformado: boolean;
+  registradoraIds: string[];
+  registradorasNomes: string[];
+  registradorasNaoInformado: boolean;
+  integracao: "" | "SIM" | "NAO";
+  integracaoNaoInformado: boolean;
+  valorEstimadoMensal: string;
+  semEstimativaValor: boolean;
+  estados: string;
+  diferenciais: string;
+}
+
+const SONDAGEM_INICIAL: SondagemState = {
+  volumeEstimado: "",
+  volumeNaoInformado: false,
+  registradoraIds: [],
+  registradorasNomes: [],
+  registradorasNaoInformado: false,
+  integracao: "",
+  integracaoNaoInformado: false,
+  valorEstimadoMensal: "",
+  semEstimativaValor: false,
+  estados: "",
+  diferenciais: "",
+};
 
 export function DesfechoAtividadeModal({
   open,
@@ -72,14 +263,22 @@ export function DesfechoAtividadeModal({
   const [motivo, setMotivo] = useState("");
   const [motivoDetalhe, setMotivoDetalhe] = useState("");
   const [motivoError, setMotivoError] = useState<string | null>(null);
+  const [dataRetorno, setDataRetorno] = useState("");
+  const [dataError, setDataError] = useState<string | null>(null);
+  const [sondagem, setSondagem] = useState<SondagemState>(SONDAGEM_INICIAL);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isSondagem = acao === "DESFECHO_DEMO";
 
   function reset() {
     setSelected(null);
     setMotivo("");
     setMotivoDetalhe("");
     setMotivoError(null);
+    setDataRetorno("");
+    setDataError(null);
+    setSondagem(SONDAGEM_INICIAL);
     setError(null);
     setSubmitting(false);
   }
@@ -90,24 +289,28 @@ export function DesfechoAtividadeModal({
     onClose();
   }
 
-  async function submit(outcome: Outcome, extra?: Partial<AplicarDesfechoInput>) {
+  async function submit(
+    outcome: Outcome,
+    extra?: Partial<AplicarDesfechoInput>,
+  ) {
     setSubmitting(true);
     setError(null);
     try {
-      await oportunidadesService.aplicarDesfecho(oportunidadeId, {
+      const payload: AplicarDesfechoInput = {
         atividadeId: atividade.id,
         resultado: outcome.resultado,
         criarFollowUp: outcome.criarFollowUp,
+        criarFollowNegociacao: outcome.criarFollowNegociacao,
+        metadata: outcome.metadata,
         ...extra,
-      });
+      };
+      await oportunidadesService.aplicarDesfecho(oportunidadeId, payload);
       reset();
       onApplied();
       onClose();
     } catch (err) {
       setError(
-        err instanceof ApiError
-          ? err.message
-          : "Falha ao aplicar desfecho.",
+        err instanceof ApiError ? err.message : "Falha ao aplicar desfecho.",
       );
     } finally {
       setSubmitting(false);
@@ -115,11 +318,52 @@ export function DesfechoAtividadeModal({
   }
 
   function handlePick(o: Outcome) {
+    // Perda entra no fluxo de motivo
     if (o.resultado === "LOST") {
       setSelected(o);
       return;
     }
-    submit(o);
+    // Outcomes que exigem data (negociação) — seleciona e mostra input
+    if (o.requiresDate) {
+      setSelected(o);
+      return;
+    }
+    // Sondagem: só permite avançar se marcou algo (form abaixo)
+    submit(o, isSondagem ? { dadosQualificacao: buildSondagemPayload() } : undefined);
+  }
+
+  function buildSondagemPayload(): Record<string, unknown> {
+    const ufs = sondagem.estados
+      .split(/[,;]+/)
+      .map((s) => s.trim().toUpperCase())
+      .filter(Boolean);
+    return {
+      volumeEstimado: sondagem.volumeNaoInformado ? null : sondagem.volumeEstimado,
+      volumeEstimadoNaoInformado: sondagem.volumeNaoInformado,
+      registradoraIds: sondagem.registradorasNaoInformado ? [] : sondagem.registradoraIds,
+      registradoras: sondagem.registradorasNaoInformado ? [] : sondagem.registradorasNomes,
+      registradorasNaoInformado: sondagem.registradorasNaoInformado,
+      integracao: sondagem.integracaoNaoInformado ? null : sondagem.integracao || null,
+      integracaoNaoInformado: sondagem.integracaoNaoInformado,
+      valorEstimadoMensal: sondagem.semEstimativaValor
+        ? null
+        : Number(sondagem.valorEstimadoMensal || 0) || null,
+      semEstimativaValor: sondagem.semEstimativaValor,
+      estados: ufs,
+      ufsNegociadas: ufs,
+      diferenciais: sondagem.diferenciais || null,
+    };
+  }
+
+  function confirmarComData() {
+    if (!selected) return;
+    if (!dataRetorno) {
+      setDataError("Informe a data de retorno.");
+      return;
+    }
+    setDataError(null);
+    const iso = new Date(dataRetorno + "T09:00:00").toISOString();
+    submit(selected, { dataRetorno: iso });
   }
 
   function confirmarPerda() {
@@ -133,26 +377,30 @@ export function DesfechoAtividadeModal({
       return;
     }
     setMotivoError(null);
-    const label =
-      MOTIVOS_PERDA.find((m) => m.value === motivo)?.label ?? motivo;
+    const label = MOTIVOS_PERDA.find((m) => m.value === motivo)?.label ?? motivo;
     const motivoPerda =
       motivo === "OUTRO" ? `Outro: ${motivoDetalhe.trim()}` : label;
     submit(selected, { motivoPerda });
   }
 
   const showingPerda = selected?.resultado === "LOST";
+  const showingData = !!selected && selected.requiresDate;
+
+  const subtitle = showingPerda
+    ? "Informe o motivo da perda para registrar."
+    : showingData
+      ? "Escolha a data de retorno para o follow-up."
+      : isSondagem
+        ? "Preencha os dados da sondagem e escolha o desfecho."
+        : "Selecione o desfecho da atividade.";
 
   return (
     <Modal
       open={open}
       onClose={handleClose}
       title={atividade.titulo || "Concluir atividade"}
-      subtitle={
-        showingPerda
-          ? "Informe o motivo da perda para registrar."
-          : "Selecione o desfecho da atividade."
-      }
-      size="md"
+      subtitle={subtitle}
+      size={isSondagem ? "lg" : "md"}
       footer={
         showingPerda ? (
           <>
@@ -175,6 +423,29 @@ export function DesfechoAtividadeModal({
               className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
               {submitting ? "Registrando…" : "Confirmar perda"}
+            </button>
+          </>
+        ) : showingData ? (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setSelected(null);
+                setDataError(null);
+                setError(null);
+              }}
+              disabled={submitting}
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
+            >
+              Voltar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarComData}
+              disabled={submitting}
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+            >
+              {submitting ? "Salvando…" : "Confirmar"}
             </button>
           </>
         ) : (
@@ -205,20 +476,188 @@ export function DesfechoAtividadeModal({
           }}
           error={motivoError}
         />
-      ) : (
-        <div className="flex flex-col gap-2">
-          {outcomes.map((o) => (
-            <OutcomeCard
-              key={o.key}
-              variant={o.variant}
-              title={o.title}
-              subtitle={o.subtitle}
-              disabled={submitting}
-              onClick={() => handlePick(o)}
+      ) : showingData ? (
+        <div className="space-y-3">
+          <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+            {selected?.title} — {selected?.subtitle}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-foreground">
+              Data de retorno
+            </label>
+            <input
+              type="date"
+              value={dataRetorno}
+              onChange={(e) => setDataRetorno(e.target.value)}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
-          ))}
+            {dataError ? (
+              <p className="mt-1 text-xs text-destructive">{dataError}</p>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {isSondagem ? (
+            <SondagemForm value={sondagem} onChange={setSondagem} disabled={submitting} />
+          ) : null}
+          <div className="flex flex-col gap-2">
+            {outcomes.map((o) => (
+              <OutcomeCard
+                key={o.key}
+                variant={o.variant}
+                title={o.title}
+                subtitle={o.subtitle}
+                disabled={submitting}
+                onClick={() => handlePick(o)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </Modal>
+  );
+}
+
+function SondagemForm({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: SondagemState;
+  onChange: (v: SondagemState) => void;
+  disabled?: boolean;
+}) {
+  function patch(p: Partial<SondagemState>) {
+    onChange({ ...value, ...p });
+  }
+  return (
+    <div className="grid gap-3 rounded-xl border border-border bg-muted/20 p-3 sm:grid-cols-2">
+      <Field
+        label="Volume mensal (registros)"
+        naoInformadoLabel="Sem estimativa"
+        naoInformado={value.volumeNaoInformado}
+        onNaoInformado={(v) => patch({ volumeNaoInformado: v })}
+      >
+        <input
+          type="text"
+          inputMode="numeric"
+          value={value.volumeEstimado}
+          onChange={(e) => patch({ volumeEstimado: e.target.value })}
+          disabled={disabled || value.volumeNaoInformado}
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+        />
+      </Field>
+
+      <Field
+        label="Valor mensal estimado (R$)"
+        naoInformadoLabel="Sem estimativa"
+        naoInformado={value.semEstimativaValor}
+        onNaoInformado={(v) => patch({ semEstimativaValor: v })}
+      >
+        <input
+          type="number"
+          value={value.valorEstimadoMensal}
+          onChange={(e) => patch({ valorEstimadoMensal: e.target.value })}
+          disabled={disabled || value.semEstimativaValor}
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+        />
+      </Field>
+
+      <Field
+        label="Utiliza integração?"
+        naoInformadoLabel="Não informado"
+        naoInformado={value.integracaoNaoInformado}
+        onNaoInformado={(v) => patch({ integracaoNaoInformado: v })}
+      >
+        <div className="inline-flex overflow-hidden rounded-lg border border-border">
+          {(["SIM", "NAO"] as const).map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              disabled={disabled || value.integracaoNaoInformado}
+              onClick={() => patch({ integracao: opt })}
+              className={`px-3 py-1.5 text-sm ${
+                value.integracao === opt
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background hover:bg-muted"
+              }`}
+            >
+              {opt === "SIM" ? "Sim" : "Não"}
+            </button>
+          ))}
+        </div>
+      </Field>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-foreground">
+          Estados (UFs, separadas por vírgula)
+        </label>
+        <input
+          type="text"
+          value={value.estados}
+          onChange={(e) => patch({ estados: e.target.value })}
+          disabled={disabled}
+          placeholder="SP, RJ, MG"
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+        />
+      </div>
+
+      <div className="sm:col-span-2">
+        <RegistradorasPicker
+          selectedIds={value.registradoraIds}
+          onChange={(ids, nomes) =>
+            patch({ registradoraIds: ids, registradorasNomes: nomes })
+          }
+          naoInformado={value.registradorasNaoInformado}
+          onNaoInformadoChange={(v) => patch({ registradorasNaoInformado: v })}
+          disabled={disabled}
+        />
+      </div>
+
+      <div className="sm:col-span-2">
+        <label className="mb-1 block text-sm font-medium text-foreground">
+          Diferenciais
+        </label>
+        <textarea
+          value={value.diferenciais}
+          onChange={(e) => patch({ diferenciais: e.target.value })}
+          disabled={disabled}
+          rows={2}
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+        />
+      </div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  naoInformadoLabel,
+  naoInformado,
+  onNaoInformado,
+  children,
+}: {
+  label: string;
+  naoInformadoLabel: string;
+  naoInformado: boolean;
+  onNaoInformado: (v: boolean) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <label className="text-sm font-medium text-foreground">{label}</label>
+        <label className="flex items-center gap-1 text-xs text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={naoInformado}
+            onChange={(e) => onNaoInformado(e.target.checked)}
+          />
+          {naoInformadoLabel}
+        </label>
+      </div>
+      {children}
+    </div>
   );
 }

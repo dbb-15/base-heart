@@ -97,6 +97,29 @@ export const oportunidadesService = {
       `/oportunidades/${id}/timeline`,
     );
   },
-  aplicarDesfecho: (id: UUID, input: AplicarDesfechoInput) =>
-    api.post<OportunidadeListItem>(`/oportunidades/${id}/desfecho`, input),
+  aplicarDesfecho: async (id: UUID, input: AplicarDesfechoInput) => {
+    if (isMockId(id)) {
+      // simula efeito no mock in-memory para feedback visual
+      const opp = MOCK_OPORTUNIDADES.find((o) => o.id === id);
+      const acts = (await import("./mocks")).MOCK_ATIVIDADES[id] ?? [];
+      const atv = acts.find((a) => a.id === input.atividadeId);
+      if (atv && input.concluirAtividade !== false && input.resultado !== "PERMANECER") {
+        atv.status = "CONCLUIDA";
+      } else if (atv && input.resultado === "PERMANECER" && input.concluirAtividade) {
+        atv.status = "CONCLUIDA";
+      }
+      if (opp) {
+        if (input.resultado === "LOST") opp.status = "CLOSED_LOST";
+        else if (input.resultado === "AVANCAR") {
+          // se confirmação de início de registros → Won
+          if (input.metadata && (input.metadata as Record<string, unknown>).iniciouRegistros) {
+            opp.status = "CLOSED_WON";
+          }
+        }
+      }
+      return opp ?? ({ id } as OportunidadeListItem);
+    }
+    return api.post<OportunidadeListItem>(`/oportunidades/${id}/desfecho`, input);
+  },
 };
+
