@@ -4,13 +4,13 @@ import { SessionProvider, useSession } from "../store/session";
 import { Layout } from "../components/Layout";
 import { LoginPage } from "../pages/LoginPage";
 import { HomePage } from "../pages/HomePage";
+import { FunilPage } from "../pages/FunilPage";
 import {
   AdminPage,
   AtividadesPage,
   BasePage,
   ConfiguracoesPage,
   ContaDetailPage,
-  FunilPage,
   GruposPage,
   NotFoundPage,
   OperacoesPage,
