@@ -1,25 +1,4 @@
 import { PageHeader, PageShell, Placeholder } from "../components/PageShell";
-import { useHashRoute, matchRoute } from "../hooks/useHashRoute";
-
-export function BasePage() {
-  return (
-    <PageShell>
-      <PageHeader title="Base" description="Contas e cadastros." />
-      <Placeholder />
-    </PageShell>
-  );
-}
-
-export function GruposPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Grupos" />
-      <Placeholder />
-    </PageShell>
-  );
-}
-
-
 
 export function AtividadesPage() {
   return (
@@ -57,21 +36,6 @@ export function ConfiguracoesPage() {
   );
 }
 
-
-export function ContaDetailPage() {
-  const route = useHashRoute();
-  const params = matchRoute("/contas/:id", route);
-  return (
-    <PageShell>
-      <PageHeader
-        title="Conta"
-        description={params?.id ? `ID: ${params.id}` : undefined}
-      />
-      <Placeholder />
-    </PageShell>
-  );
-}
-
 export function NotFoundPage() {
   return (
     <PageShell>
@@ -80,3 +44,4 @@ export function NotFoundPage() {
     </PageShell>
   );
 }
+

@@ -1,5 +1,22 @@
 // Labels em pt-BR para exibição de enums e chaves de domínio.
-import type { Role, TipoAtividade, StatusAtividade } from "./types";
+import type { Role, TipoAtividade, StatusAtividade, StatusConta, Segmento } from "./types";
+
+export const STATUS_CONTA_LABEL: Record<StatusConta, string> = {
+  PROSPECT: "Prospect",
+  CLIENTE: "Cliente",
+  INATIVO: "Inativo",
+};
+
+export const SEGMENTO_LABEL: Record<Segmento, string> = {
+  BANCO: "Banco",
+  FINANCEIRA: "Financeira",
+  COOPERATIVA: "Cooperativa",
+  CONSORCIO: "Consórcio",
+  CONCESSIONARIA: "Concessionária",
+  REVENDA: "Revenda",
+  OUTROS: "Outros",
+};
+
 
 export const ROLE_LABEL: Record<Role, string> = {
   admin: "Administrador",

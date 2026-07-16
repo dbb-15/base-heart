@@ -344,9 +344,20 @@ export const MOCK_NOTAS: Record<string, Nota[]> = {
       texto: "Cliente demonstrou interesse em ampliar cobertura de UFs.",
       criadaEm: new Date(Date.now() - 86400_000).toISOString(),
       autorNome: "Você (mock)",
+      tipo: "COMUM",
+    },
+    {
+      id: "mock-nota-2",
+      texto: "Prefere contato por WhatsApp após 14h.",
+      criadaEm: new Date(Date.now() - 2 * 86400_000).toISOString(),
+      autorNome: "Você (mock)",
+      tipo: "CADASTRO_CONTATO",
+      contatoId: "mock-ct-1",
+      contatoNome: "Ana Souza",
     },
   ],
 };
+
 
 export const MOCK_TIMELINE: Record<string, TimelineItem[]> = {
   [MOCK_OPP_ID]: [

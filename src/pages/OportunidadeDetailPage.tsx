@@ -180,7 +180,15 @@ export function OportunidadeDetailPage() {
                 onToggle={toggleAtividade}
               />
             ) : null}
-            {tab === "notas" ? <NotasTab notas={notas} /> : null}
+            {tab === "notas" ? (
+              <NotasTab
+                notas={notas}
+                contaId={opp?.contaId}
+                onChanged={() =>
+                  id && notasService.list(id).then(setNotas).catch(() => {})
+                }
+              />
+            ) : null}
             {tab === "historico" ? <HistoricoTab items={timeline} /> : null}
             {tab === "detalhes" && opp ? <DetalhesTab opp={opp} /> : null}
           </section>
@@ -277,7 +285,50 @@ function AtividadesTab({
   );
 }
 
-function NotasTab({ notas }: { notas: Nota[] }) {
+function NotasTab({
+  notas,
+  contaId,
+  onChanged,
+}: {
+  notas: Nota[];
+  contaId?: string;
+  onChanged: () => void;
+}) {
+  const [contatos, setContatos] = useState<import("../types").Contato[]>([]);
+  const [editing, setEditing] = useState<string | null>(null);
+  const [text, setText] = useState("");
+  const [ctId, setCtId] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!contaId) return;
+    import("../services/contatos").then((m) =>
+      m.contatosService.list(contaId).then(setContatos).catch(() => setContatos([])),
+    );
+  }, [contaId]);
+
+  function startEdit(n: Nota) {
+    setEditing(n.id);
+    setText(n.texto);
+    setCtId(n.contatoId ?? "");
+  }
+
+  async function save(n: Nota) {
+    setSaving(true);
+    try {
+      const contato = contatos.find((c) => c.id === ctId);
+      await notasService.update(n.id, {
+        texto: text,
+        contatoId: ctId || null,
+        contatoNome: contato?.nome ?? null,
+      });
+      setEditing(null);
+      onChanged();
+    } finally {
+      setSaving(false);
+    }
+  }
+
   if (notas.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border bg-card px-4 py-8 text-center text-sm text-muted-foreground">
@@ -287,22 +338,92 @@ function NotasTab({ notas }: { notas: Nota[] }) {
   }
   return (
     <ul className="space-y-3">
-      {notas.map((n) => (
-        <li
-          key={n.id}
-          className="rounded-lg border border-border bg-card px-3 py-3"
-        >
-          <p className="whitespace-pre-wrap text-sm text-foreground">{n.texto}</p>
-          <p className="mt-2 text-xs text-muted-foreground">
-            {formatDateTime(n.criadaEm)}
-            {n.autorNome ? ` • ${n.autorNome}` : ""}
-            {n.contatoNome ? ` • Contato: ${n.contatoNome}` : ""}
-          </p>
-        </li>
-      ))}
+      {notas.map((n) => {
+        const isCadastro = n.tipo === "CADASTRO_CONTATO";
+        const isEditing = editing === n.id;
+        return (
+          <li
+            key={n.id}
+            className="rounded-lg border border-border bg-card px-3 py-3"
+          >
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              {isCadastro ? (
+                <span className="rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-800">
+                  Cadastro do contato
+                </span>
+              ) : null}
+              {n.contatoNome && !isEditing ? (
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+                  Contato: {n.contatoNome}
+                </span>
+              ) : null}
+              <span className="ml-auto text-xs text-muted-foreground">
+                {formatDateTime(n.criadaEm)}
+                {n.autorNome ? ` • ${n.autorNome}` : ""}
+              </span>
+            </div>
+            {isEditing ? (
+              <div className="space-y-2">
+                <textarea
+                  rows={3}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+                />
+                <div className="flex flex-wrap items-center gap-2">
+                  <label className="text-xs text-muted-foreground">Contato:</label>
+                  <select
+                    value={ctId}
+                    onChange={(e) => setCtId(e.target.value)}
+                    className="rounded-lg border border-border bg-background px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+                  >
+                    <option value="">— sem contato —</option>
+                    {contatos.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.nome}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="ml-auto flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditing(null)}
+                      className="rounded-lg border border-border bg-background px-2 py-1 text-xs hover:bg-muted"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => save(n)}
+                      disabled={saving}
+                      className="rounded-lg bg-primary px-2 py-1 text-xs font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                    >
+                      {saving ? "Salvando…" : "Salvar"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="whitespace-pre-wrap text-sm text-foreground">{n.texto}</p>
+                <div className="mt-2 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => startEdit(n)}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Editar
+                  </button>
+                </div>
+              </>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }
+
 
 function HistoricoTab({ items }: { items: TimelineItem[] }) {
   if (items.length === 0) {
