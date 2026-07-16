@@ -48,11 +48,12 @@ type OutcomeKey =
 
 interface Outcome {
   key: OutcomeKey;
-  variant: "success" | "warn" | "danger";
+  variant: "success" | "primary" | "warn" | "danger";
   title: string;
   subtitle: string;
   resultado: "AVANCAR" | "PERMANECER" | "LOST";
   requiresDate?: boolean;
+  requiresUfs?: boolean;
   criarFollowNegociacao?: boolean;
   criarFollowUp?: boolean;
   metadata?: Record<string, unknown>;
@@ -310,18 +311,6 @@ function outcomesFor(acao: AcaoAtividade): Outcome[] {
       return [
         {
           key: "avancar",
-          variant: "success",
-          title: "Resultado positivo",
-          subtitle: "Concluir e avançar no funil",
-          resultado: "AVANCAR",
-        },
-        {
-          key: "follow",
-          variant: "warn",
-          title: "Ainda tentando",
-          subtitle: "Manter no estágio e criar follow-up",
-          resultado: "PERMANECER",
-          criarFollowUp: true,
           variant: "success",
           title: "Resultado positivo",
           subtitle: "Concluir e avançar no funil",
