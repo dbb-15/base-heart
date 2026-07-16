@@ -202,6 +202,77 @@ export const MOCK_ATIVIDADES: Record<string, AtividadeListItem[]> = {
       oportunidadeId: MOCK_OPP_ID,
     },
   ],
+  "mock-exp-1": [
+    {
+      id: "mock-exp1-atv-1",
+      titulo: "Observar fluxo e-Registro",
+      tipo: "TAREFA",
+      status: "PENDENTE",
+      obrigatoria: false,
+      templateItem: { acao: "OBSERVAR_FLUXO_EREGISTRO", ordem: 1 },
+      oportunidadeId: "mock-exp-1",
+    },
+    {
+      id: "mock-exp1-atv-2",
+      titulo: "Sondagem de expansão",
+      tipo: "REUNIAO",
+      status: "PENDENTE",
+      obrigatoria: true,
+      templateItem: { acao: "DESFECHO_SONDAGEM_EXPANSAO", ordem: 2 },
+      oportunidadeId: "mock-exp-1",
+    },
+  ],
+  "mock-exp-2": [
+    {
+      id: "mock-exp2-atv-1",
+      titulo: "Negociar condições (expansão UF)",
+      tipo: "REUNIAO",
+      status: "PENDENTE",
+      obrigatoria: true,
+      templateItem: { acao: "DESFECHO_NEGOCIACAO", ordem: 1 },
+      oportunidadeId: "mock-exp-2",
+    },
+    {
+      id: "mock-exp2-atv-2",
+      titulo: "Conferir UFs realizadas",
+      tipo: "TAREFA",
+      status: "PENDENTE",
+      obrigatoria: true,
+      templateItem: { acao: "CONFERIR_UFS_EXPANSAO", ordem: 2 },
+      oportunidadeId: "mock-exp-2",
+    },
+  ],
+  "mock-exp-3": [
+    {
+      id: "mock-exp3-atv-1",
+      titulo: "Abordagem de volume",
+      tipo: "LIGACAO",
+      status: "PENDENTE",
+      obrigatoria: true,
+      templateItem: { acao: "DESFECHO_ABORDAGEM_VOLUME", ordem: 1 },
+      oportunidadeId: "mock-exp-3",
+    },
+    {
+      id: "mock-exp3-atv-2",
+      titulo: "Reunião de volume",
+      tipo: "REUNIAO",
+      status: "PENDENTE",
+      obrigatoria: false,
+      templateItem: { acao: "DESFECHO_REUNIAO_VOLUME", ordem: 2 },
+      oportunidadeId: "mock-exp-3",
+    },
+  ],
+  "mock-exp-4": [
+    {
+      id: "mock-exp4-atv-1",
+      titulo: "Entrar em contato (standby)",
+      tipo: "LIGACAO",
+      status: "PENDENTE",
+      obrigatoria: true,
+      templateItem: { acao: "DESFECHO_STANDBY_EXPANSAO", ordem: 1 },
+      oportunidadeId: "mock-exp-4",
+    },
+  ],
 };
 
 export const MOCK_WORKFLOWS: Record<string, WorkflowAtual> = {
