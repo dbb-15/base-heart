@@ -511,14 +511,17 @@ export function DesfechoAtividadeModal({
 
   const showingPerda = selected?.resultado === "LOST";
   const showingData = !!selected && selected.requiresDate;
+  const showingUfs = !!selected && selected.requiresUfs;
 
   const subtitle = showingPerda
     ? "Informe o motivo da perda para registrar."
     : showingData
       ? "Escolha a data de retorno para o follow-up."
-      : isSondagem
-        ? "Preencha os dados da sondagem e escolha o desfecho."
-        : "Selecione o desfecho da atividade.";
+      : showingUfs
+        ? "Selecione as UFs realizadas."
+        : isSondagem
+          ? "Preencha os dados da sondagem e escolha o desfecho."
+          : "Selecione o desfecho da atividade.";
 
   return (
     <Modal
