@@ -5,6 +5,7 @@ import { Layout } from "../components/Layout";
 import { LoginPage } from "../pages/LoginPage";
 import { HomePage } from "../pages/HomePage";
 import { FunilPage } from "../pages/FunilPage";
+import { OportunidadeDetailPage } from "../pages/OportunidadeDetailPage";
 import {
   AdminPage,
   AtividadesPage,
@@ -14,7 +15,6 @@ import {
   GruposPage,
   NotFoundPage,
   OperacoesPage,
-  OportunidadeDetailPage,
   RegistradorasPage,
 } from "../pages/placeholders";
 

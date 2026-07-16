@@ -65,28 +65,6 @@ export function ConfiguracoesPage() {
   );
 }
 
-export function OportunidadeDetailPage() {
-  const route = useHashRoute();
-  const params = matchRoute("/oportunidades/:id", route);
-  return (
-    <PageShell>
-      <PageHeader
-        title="Oportunidade"
-        description={params?.id ? `ID: ${params.id}` : undefined}
-        actions={
-          <button
-            type="button"
-            onClick={() => window.history.back()}
-            className="rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm hover:bg-muted"
-          >
-            ← Voltar
-          </button>
-        }
-      />
-      <Placeholder note="Detalhe da oportunidade — próxima camada (atividades, desfechos, notas)." />
-    </PageShell>
-  );
-}
 
 export function ContaDetailPage() {
   const route = useHashRoute();
