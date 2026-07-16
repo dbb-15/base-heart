@@ -29,28 +29,22 @@ interface Props {
 }
 
 type OutcomeKey =
-  // genéricos
-  | "avancar"
-  | "follow"
-  | "perda"
-  // negociação
-  | "neg_aprovou"
-  | "neg_continua"
-  | "neg_sem_fit"
-  // follow negociação
-  | "fneg_aprovou"
-  | "fneg_continua"
-  | "fneg_sem_fit"
-  // sondagem
-  | "sond_proposta"
-  | "sond_sem_interesse"
-  // recuperação
-  | "rec_reativou"
-  | "rec_tentando"
-  | "rec_sem_interesse"
-  // confirmação início registros
-  | "reg_sim"
-  | "reg_ainda_nao";
+  | "avancar" | "follow" | "perda"
+  | "neg_aprovou" | "neg_continua" | "neg_sem_fit"
+  | "fneg_aprovou" | "fneg_continua" | "fneg_sem_fit"
+  | "sond_proposta" | "sond_sem_interesse"
+  | "rec_reativou" | "rec_tentando" | "rec_sem_interesse"
+  | "reg_sim" | "reg_ainda_nao"
+  // expansão — sondagem
+  | "sondexp_uf" | "sondexp_volume" | "sondexp_standby"
+  // expansão — abordagem volume
+  | "abv_reuniao" | "abv_manter" | "abv_standby"
+  // expansão — reunião volume
+  | "rev_realizada" | "rev_remarcar" | "rev_standby"
+  // expansão — standby
+  | "stb_recuperou" | "stb_em_contato" | "stb_manter"
+  // conferir UFs
+  | "ufs_confirmar";
 
 interface Outcome {
   key: OutcomeKey;
