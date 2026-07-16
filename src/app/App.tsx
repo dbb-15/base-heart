@@ -4,13 +4,13 @@ import { SessionProvider, useSession } from "../store/session";
 import { Layout } from "../components/Layout";
 import { LoginPage } from "../pages/LoginPage";
 import { HomePage } from "../pages/HomePage";
+import { FunilPage } from "../pages/FunilPage";
 import {
   AdminPage,
   AtividadesPage,
   BasePage,
   ConfiguracoesPage,
   ContaDetailPage,
-  FunilPage,
   GruposPage,
   NotFoundPage,
   OperacoesPage,
@@ -24,7 +24,9 @@ function Router() {
   if (route.path === "/") return <HomePage />;
   if (route.path === "/base") return <BasePage />;
   if (route.path === "/grupos") return <GruposPage />;
-  if (route.path === "/funil") return <FunilPage />;
+  if (route.path === "/funil" || route.path === "/funil/aquisicao")
+    return <FunilPage pipeline="AQUISICAO" />;
+  if (route.path === "/funil/expansao") return <FunilPage pipeline="EXPANSAO" />;
   if (route.path === "/operacoes") return <OperacoesPage />;
   if (route.path === "/atividades") return <AtividadesPage />;
   if (route.path === "/admin") return <AdminPage />;

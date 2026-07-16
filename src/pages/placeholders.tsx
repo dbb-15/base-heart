@@ -19,14 +19,6 @@ export function GruposPage() {
   );
 }
 
-export function FunilPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Funil" description="Kanban será implementado adiante." />
-      <Placeholder />
-    </PageShell>
-  );
-}
 
 export function OperacoesPage() {
   return (
@@ -81,8 +73,17 @@ export function OportunidadeDetailPage() {
       <PageHeader
         title="Oportunidade"
         description={params?.id ? `ID: ${params.id}` : undefined}
+        actions={
+          <button
+            type="button"
+            onClick={() => window.history.back()}
+            className="rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm hover:bg-muted"
+          >
+            ← Voltar
+          </button>
+        }
       />
-      <Placeholder />
+      <Placeholder note="Detalhe da oportunidade — próxima camada (atividades, desfechos, notas)." />
     </PageShell>
   );
 }
