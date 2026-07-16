@@ -19,14 +19,6 @@ export function GruposPage() {
   );
 }
 
-export function FunilPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Funil" description="Kanban será implementado adiante." />
-      <Placeholder />
-    </PageShell>
-  );
-}
 
 export function OperacoesPage() {
   return (
