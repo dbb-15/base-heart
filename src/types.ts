@@ -37,6 +37,22 @@ export interface LoginPayload {
 // Placeholder domain shapes — refine when wiring real endpoints.
 export type StatusConta = "PROSPECT" | "CLIENTE" | "INATIVO";
 
+export type Segmento =
+  | "BANCO"
+  | "FINANCEIRA"
+  | "COOPERATIVA"
+  | "CONSORCIO"
+  | "CONCESSIONARIA"
+  | "REVENDA"
+  | "OUTROS";
+
+export interface GrupoFinanceiro {
+  id: UUID;
+  nome: string;
+  descricao?: string | null;
+  totalContas?: number;
+}
+
 export interface Conta {
   id: UUID;
   nome?: string;
@@ -45,7 +61,27 @@ export interface Conta {
   cnpj?: string | null;
   status?: StatusConta;
   documento?: string;
+  segmento?: Segmento | null;
+  grupoId?: UUID | null;
+  grupoNome?: string | null;
+  ownerId?: UUID | null;
+  ownerNome?: string | null;
+  uf?: string | null;
+  municipio?: string | null;
+  criadaEm?: ISODate;
 }
+
+export interface Contato {
+  id: UUID;
+  contaId: UUID;
+  nome: string;
+  cargo?: string | null;
+  email?: string | null;
+  telefone?: string | null;
+  principal?: boolean;
+  anotacoes?: string | null;
+}
+
 
 export type Pipeline = "AQUISICAO" | "EXPANSAO" | "OPERACOES";
 export type Produto = "E_REGISTRO" | "E_BUSCAR";
