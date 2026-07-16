@@ -815,3 +815,52 @@ function Field({
     </div>
   );
 }
+
+const UFS_BR = [
+  "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG",
+  "PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO",
+];
+
+function UfsPicker({
+  value,
+  onChange,
+  error,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  error?: string | null;
+}) {
+  function toggle(uf: string) {
+    const set = new Set(value);
+    if (set.has(uf)) set.delete(uf);
+    else set.add(uf);
+    onChange(Array.from(set));
+  }
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted-foreground">
+        Marque as UFs em que a expansão foi realizada.
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {UFS_BR.map((uf) => {
+          const active = value.includes(uf);
+          return (
+            <button
+              key={uf}
+              type="button"
+              onClick={() => toggle(uf)}
+              className={`rounded-md border px-2 py-1 text-xs font-medium transition ${
+                active
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border bg-background text-foreground hover:bg-muted"
+              }`}
+            >
+              {uf}
+            </button>
+          );
+        })}
+      </div>
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
+    </div>
+  );
+}
