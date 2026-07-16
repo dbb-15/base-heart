@@ -20,14 +20,6 @@ export function GruposPage() {
 }
 
 
-export function OperacoesPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Operações" />
-      <Placeholder />
-    </PageShell>
-  );
-}
 
 export function AtividadesPage() {
   return (
