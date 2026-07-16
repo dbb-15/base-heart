@@ -577,6 +577,29 @@ export function DesfechoAtividadeModal({
               {submitting ? "Salvando…" : "Confirmar"}
             </button>
           </>
+        ) : showingUfs ? (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setSelected(null);
+                setUfsError(null);
+                setError(null);
+              }}
+              disabled={submitting}
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
+            >
+              Voltar
+            </button>
+            <button
+              type="button"
+              onClick={confirmarComUfs}
+              disabled={submitting}
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+            >
+              {submitting ? "Salvando…" : "Confirmar"}
+            </button>
+          </>
         ) : (
           <button
             type="button"
