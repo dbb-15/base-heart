@@ -26,6 +26,8 @@ function toQuery(params?: Record<string, unknown>): string {
 
 export const oportunidadesService = {
   list: (filters?: ListOportunidadesFilters) =>
-    api.get<OportunidadeListItem[]>(`/oportunidades${toQuery(filters)}`),
+    api.get<OportunidadeListItem[]>(
+      `/oportunidades${toQuery(filters as Record<string, unknown> | undefined)}`,
+    ),
   get: (id: UUID) => api.get<OportunidadeListItem>(`/oportunidades/${id}`),
 };
