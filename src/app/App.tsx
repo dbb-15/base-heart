@@ -9,13 +9,13 @@ import { OportunidadeDetailPage } from "../pages/OportunidadeDetailPage";
 import {
   AdminPage,
   AtividadesPage,
-  BasePage,
   ConfiguracoesPage,
-  ContaDetailPage,
-  GruposPage,
   NotFoundPage,
   RegistradorasPage,
 } from "../pages/placeholders";
+import { BasePage } from "../pages/BasePage";
+import { ContaDetailPage } from "../pages/ContaDetailPage";
+import { GruposPage } from "../pages/GruposPage";
 import { OperacoesPage } from "../pages/OperacoesPage";
 
 function Router() {
