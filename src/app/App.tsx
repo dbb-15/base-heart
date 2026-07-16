@@ -16,6 +16,7 @@ import { GruposPage } from "../pages/GruposPage";
 import { AdminPage } from "../pages/AdminPage";
 import { ConfiguracoesPage } from "../pages/ConfiguracoesPage";
 import { OperacoesPage } from "../pages/OperacoesPage";
+import { RelatoriosPage } from "../pages/RelatoriosPage";
 
 function Router() {
   const route = useHashRoute();
@@ -28,6 +29,7 @@ function Router() {
   if (route.path === "/funil/expansao") return <FunilPage pipeline="EXPANSAO" />;
   if (route.path === "/operacoes") return <OperacoesPage />;
   if (route.path === "/atividades") return <AtividadesPage />;
+  if (route.path === "/relatorios") return <RelatoriosPage />;
   if (route.path === "/admin") return <AdminPage />;
   if (route.path === "/admin/registradoras") return <AdminPage />;
   if (route.path === "/configuracoes") return <ConfiguracoesPage />;
