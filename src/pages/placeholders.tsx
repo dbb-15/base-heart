@@ -9,32 +9,6 @@ export function AtividadesPage() {
   );
 }
 
-export function AdminPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Administração" />
-      <Placeholder />
-    </PageShell>
-  );
-}
-
-export function RegistradorasPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Registradoras" />
-      <Placeholder />
-    </PageShell>
-  );
-}
-
-export function ConfiguracoesPage() {
-  return (
-    <PageShell>
-      <PageHeader title="Configurações" />
-      <Placeholder />
-    </PageShell>
-  );
-}
 
 export function NotFoundPage() {
   return (
