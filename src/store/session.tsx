@@ -22,6 +22,7 @@ interface SessionState {
 
 interface SessionContextValue extends SessionState {
   login: (payload: LoginPayload) => Promise<void>;
+  devLogin: (user: User) => void;
   logout: () => Promise<void>;
   hasRole: (roles: Role | Role[]) => boolean;
 }
