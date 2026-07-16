@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { ApiError, configureApi } from "../services/api";
+import { configureApi } from "../services/api";
 import { authService } from "../services/auth";
 import type { LoginPayload, Role, User } from "../types";
 
