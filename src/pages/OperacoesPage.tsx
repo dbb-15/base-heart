@@ -458,14 +458,6 @@ function DemandasTab() {
   );
 }
 
-function matrizTone(dif: Nivel, imp: Nivel): string {
-  const score = (dif === "ALTO" ? 2 : dif === "MEDIO" ? 1 : 0) +
-    (imp === "ALTO" ? 2 : imp === "MEDIO" ? 1 : 0);
-  if (score >= 3) return "border-red-200 bg-red-50";
-  if (score === 2) return "border-amber-200 bg-amber-50";
-  return "border-emerald-200 bg-emerald-50";
-}
-
 function NovaDemandaModal({
   onClose,
   onSaved,
