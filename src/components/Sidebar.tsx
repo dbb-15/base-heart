@@ -18,12 +18,8 @@ const NAV: NavItem[] = [
   { path: "/operacoes", label: NAV_LABEL.operacoes, roles: ["admin", "gestor", "operacoes"] },
   { path: "/atividades", label: NAV_LABEL.atividades },
   { path: "/admin", label: NAV_LABEL.admin, roles: ["admin"] },
-  {
-    path: "/admin/registradoras",
-    label: NAV_LABEL.registradoras,
-    roles: ["admin", "registradora"],
-  },
-  { path: "/configuracoes", label: NAV_LABEL.configuracoes },
+  { path: "/configuracoes", label: NAV_LABEL.configuracoes, roles: ["admin", "gestor"] },
+
 ];
 
 export function Sidebar() {

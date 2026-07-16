@@ -7,15 +7,14 @@ import { HomePage } from "../pages/HomePage";
 import { FunilPage } from "../pages/FunilPage";
 import { OportunidadeDetailPage } from "../pages/OportunidadeDetailPage";
 import {
-  AdminPage,
   AtividadesPage,
-  ConfiguracoesPage,
   NotFoundPage,
-  RegistradorasPage,
 } from "../pages/placeholders";
 import { BasePage } from "../pages/BasePage";
 import { ContaDetailPage } from "../pages/ContaDetailPage";
 import { GruposPage } from "../pages/GruposPage";
+import { AdminPage } from "../pages/AdminPage";
+import { ConfiguracoesPage } from "../pages/ConfiguracoesPage";
 import { OperacoesPage } from "../pages/OperacoesPage";
 
 function Router() {
@@ -30,7 +29,7 @@ function Router() {
   if (route.path === "/operacoes") return <OperacoesPage />;
   if (route.path === "/atividades") return <AtividadesPage />;
   if (route.path === "/admin") return <AdminPage />;
-  if (route.path === "/admin/registradoras") return <RegistradorasPage />;
+  if (route.path === "/admin/registradoras") return <AdminPage />;
   if (route.path === "/configuracoes") return <ConfiguracoesPage />;
   if (matchRoute("/oportunidades/:id", route)) return <OportunidadeDetailPage />;
   if (matchRoute("/contas/:id", route)) return <ContaDetailPage />;
