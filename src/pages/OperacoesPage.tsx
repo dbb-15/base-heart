@@ -398,80 +398,8 @@ function DemandasTab() {
   };
   useEffect(refresh, []);
 
-  // Matriz dificuldade × impacto (dificuldade nas linhas, impacto nas colunas)
-  const matriz = useMemo(() => {
-    const m: Record<Nivel, Record<Nivel, Demanda[]>> = {
-      BAIXO: { BAIXO: [], MEDIO: [], ALTO: [] },
-      MEDIO: { BAIXO: [], MEDIO: [], ALTO: [] },
-      ALTO: { BAIXO: [], MEDIO: [], ALTO: [] },
-    };
-    for (const d of items) m[d.dificuldade][d.impacto].push(d);
-    return m;
-  }, [items]);
-
   return (
-    <div className="space-y-6">
-      <SectionCard
-        title="Matriz Dificuldade × Impacto"
-        subtitle="Dificuldade nas linhas, impacto nas colunas."
-      >
-        {loading ? (
-          <div className="text-sm text-muted-foreground">Carregando...</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-separate border-spacing-1">
-              <thead>
-                <tr>
-                  <th className="w-24"></th>
-                  {NIVEIS.map((imp) => (
-                    <th
-                      key={imp}
-                      className="rounded bg-muted px-2 py-1 text-center text-xs uppercase text-muted-foreground"
-                    >
-                      Impacto: {NIVEL_LABEL[imp]}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {NIVEIS.map((dif) => (
-                  <tr key={dif}>
-                    <th className="rounded bg-muted px-2 py-1 text-right text-xs uppercase text-muted-foreground">
-                      Dif: {NIVEL_LABEL[dif]}
-                    </th>
-                    {NIVEIS.map((imp) => {
-                      const list = matriz[dif][imp];
-                      const tone = matrizTone(dif, imp);
-                      return (
-                        <td
-                          key={imp}
-                          className={`min-w-[140px] rounded border ${tone} p-2 align-top`}
-                        >
-                          {list.length === 0 ? (
-                            <div className="text-center text-xs text-muted-foreground">—</div>
-                          ) : (
-                            <ul className="space-y-1">
-                              {list.map((d) => (
-                                <li
-                                  key={d.id}
-                                  className="rounded bg-card px-2 py-1 text-xs shadow-sm"
-                                >
-                                  {d.titulo}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </SectionCard>
-
+    <div>
       <SectionCard
         title="Demandas"
         action={
