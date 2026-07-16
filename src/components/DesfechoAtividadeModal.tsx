@@ -201,7 +201,7 @@ function outcomesFor(acao: AcaoAtividade): Outcome[] {
         },
         {
           key: "sondexp_volume",
-          variant: "primary" as never,
+          variant: "primary",
           title: "Ramo: Aumento de Volume",
           subtitle: "Move para Sem contato (Volume)",
           resultado: "PERMANECER",
