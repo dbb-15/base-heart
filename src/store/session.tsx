@@ -133,6 +133,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     clearSession();
   }, [clearSession]);
 
+  const devLogin = useCallback<SessionContextValue["devLogin"]>(
+    (user) => {
+      const token = "dev-mock-token";
+      setAccessToken(token);
+      setState({ user, accessToken: token, status: "authenticated" });
+    },
+    [setAccessToken],
+  );
+
   const hasRole = useCallback<SessionContextValue["hasRole"]>(
     (roles) => {
       if (!state.user) return false;
@@ -143,9 +152,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo<SessionContextValue>(
-    () => ({ ...state, login, logout, hasRole }),
-    [state, login, logout, hasRole],
+    () => ({ ...state, login, devLogin, logout, hasRole }),
+    [state, login, devLogin, logout, hasRole],
   );
+
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
