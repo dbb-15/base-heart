@@ -648,6 +648,8 @@ export function DesfechoAtividadeModal({
             ) : null}
           </div>
         </div>
+      ) : showingUfs ? (
+        <UfsPicker value={ufsSel} onChange={setUfsSel} error={ufsError} />
       ) : (
         <div className="space-y-4">
           {isSondagem ? (
