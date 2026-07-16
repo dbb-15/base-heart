@@ -7,7 +7,7 @@ import { ApiError } from "../services/api";
 const MOCK_ENABLED = import.meta.env.VITE_MOCK_LOGIN === "1";
 
 export function LoginPage() {
-  const { login } = useSession();
+  const { login, devLogin } = useSession();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
