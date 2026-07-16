@@ -188,10 +188,140 @@ function outcomesFor(acao: AcaoAtividade): Outcome[] {
           criarFollowUp: true,
         },
       ];
+    case "DESFECHO_SONDAGEM_EXPANSAO":
+      return [
+        {
+          key: "sondexp_uf",
+          variant: "success",
+          title: "Ramo: Aumento de UF",
+          subtitle: "Move para Proposta (UF)",
+          resultado: "PERMANECER",
+          metadata: { tipoExpansao: "UF" },
+        },
+        {
+          key: "sondexp_volume",
+          variant: "primary" as never,
+          title: "Ramo: Aumento de Volume",
+          subtitle: "Move para Sem contato (Volume)",
+          resultado: "PERMANECER",
+          metadata: { tipoExpansao: "VOLUME" },
+        },
+        {
+          key: "sondexp_standby",
+          variant: "warn",
+          title: "Standby",
+          subtitle: "Sem oportunidade agora — retoma em D+30",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+          metadata: { tipoExpansao: "STANDBY" },
+        },
+      ];
+    case "DESFECHO_ABORDAGEM_VOLUME":
+      return [
+        {
+          key: "abv_reuniao",
+          variant: "success",
+          title: "Marcar reunião",
+          subtitle: "Avança para Em contato / agenda reunião",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "abv_manter",
+          variant: "warn",
+          title: "Manter contato",
+          subtitle: "Cria novo follow-up de abordagem",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+        {
+          key: "abv_standby",
+          variant: "warn",
+          title: "Standby",
+          subtitle: "Sem interesse imediato — retoma depois",
+          resultado: "PERMANECER",
+          metadata: { moverParaStandby: true },
+        },
+      ];
+    case "DESFECHO_REUNIAO_VOLUME":
+      return [
+        {
+          key: "rev_realizada",
+          variant: "success",
+          title: "Reunião realizada",
+          subtitle: "Avança para Negociando",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "rev_remarcar",
+          variant: "warn",
+          title: "Remarcar",
+          subtitle: "Agenda nova reunião",
+          resultado: "PERMANECER",
+          requiresDate: true,
+          criarFollowUp: true,
+        },
+        {
+          key: "rev_standby",
+          variant: "warn",
+          title: "Standby",
+          subtitle: "Sem interesse agora",
+          resultado: "PERMANECER",
+          metadata: { moverParaStandby: true },
+        },
+      ];
+    case "DESFECHO_STANDBY_EXPANSAO":
+      return [
+        {
+          key: "stb_recuperou",
+          variant: "success",
+          title: "Cliente recuperado",
+          subtitle: "Reabre expansão a partir de Mapeamento",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "stb_em_contato",
+          variant: "warn",
+          title: "Em contato",
+          subtitle: "Retomou conversa — cria follow-up",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+        {
+          key: "stb_manter",
+          variant: "warn",
+          title: "Manter standby",
+          subtitle: "Sem movimento — novo follow em D+30",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
+        },
+      ];
+    case "CONFERIR_UFS_EXPANSAO":
+      return [
+        {
+          key: "ufs_confirmar",
+          variant: "success",
+          title: "Confirmar UFs realizadas",
+          subtitle: "Selecione as UFs e avance de estágio",
+          resultado: "AVANCAR",
+          requiresUfs: true,
+        },
+      ];
     default:
       return [
         {
           key: "avancar",
+          variant: "success",
+          title: "Resultado positivo",
+          subtitle: "Concluir e avançar no funil",
+          resultado: "AVANCAR",
+        },
+        {
+          key: "follow",
+          variant: "warn",
+          title: "Ainda tentando",
+          subtitle: "Manter no estágio e criar follow-up",
+          resultado: "PERMANECER",
+          criarFollowUp: true,
           variant: "success",
           title: "Resultado positivo",
           subtitle: "Concluir e avançar no funil",
