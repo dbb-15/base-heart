@@ -28,19 +28,15 @@ export function LoginPage() {
     }
   }
 
-  async function mockLogin() {
-    setError(null);
-    setLoading(true);
-    try {
-      // Injeta uma sessão fake diretamente no store via login endpoint mock.
-      // Como não há backend, simulamos throw + set via storage.
-      const fakeToken = "mock-token";
-      window.localStorage.setItem("alias.crm.accessToken", fakeToken);
-      window.location.reload();
-    } finally {
-      setLoading(false);
-    }
+  function mockLogin() {
+    devLogin({
+      id: "dev-1",
+      nome: "Usuário Dev",
+      email: email || "dev@alias.local",
+      role: "admin",
+    });
   }
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
