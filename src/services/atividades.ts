@@ -1,6 +1,8 @@
 // Atividades — listar, criar (stub), atualizar status.
+// Fallback: fixtures mock para ids/oportunidades "mock-*".
 import { api } from "./api";
 import type { AtividadeListItem, StatusAtividade, UUID } from "../types";
+import { MOCK_ATIVIDADES, isMockId } from "./mocks";
 
 function toQuery(params?: Record<string, unknown>): string {
   if (!params) return "";
@@ -21,10 +23,29 @@ export interface ListAtividadesFilters {
 }
 
 export const atividadesService = {
-  list: (filters?: ListAtividadesFilters) =>
-    api.get<AtividadeListItem[]>(
-      `/atividades${toQuery(filters as Record<string, unknown> | undefined)}`,
-    ),
-  updateStatus: (id: UUID, status: StatusAtividade) =>
-    api.patch<AtividadeListItem>(`/atividades/${id}/status`, { status }),
+  list: async (filters?: ListAtividadesFilters) => {
+    if (filters?.oportunidadeId && isMockId(filters.oportunidadeId)) {
+      return MOCK_ATIVIDADES[filters.oportunidadeId] ?? [];
+    }
+    try {
+      return await api.get<AtividadeListItem[]>(
+        `/atividades${toQuery(filters as Record<string, unknown> | undefined)}`,
+      );
+    } catch {
+      return [];
+    }
+  },
+  updateStatus: async (id: UUID, status: StatusAtividade) => {
+    if (isMockId(id)) {
+      // atualiza fixture in-memory para feedback visual
+      for (const list of Object.values(MOCK_ATIVIDADES)) {
+        const a = list.find((x) => x.id === id);
+        if (a) {
+          a.status = status;
+          return a;
+        }
+      }
+    }
+    return api.patch<AtividadeListItem>(`/atividades/${id}/status`, { status });
+  },
 };

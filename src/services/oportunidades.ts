@@ -1,7 +1,14 @@
 // Service tipado para /oportunidades.
 // Espelha contrato backend (Fastify). Filtros/campos podem crescer sem quebrar UI.
+// Fallback: quando a API falha (backend offline), retorna fixtures de src/services/mocks.
 import { api } from "./api";
 import type { OportunidadeListItem, Pipeline, Produto, UUID } from "../types";
+import {
+  MOCK_OPORTUNIDADES,
+  MOCK_TIMELINE,
+  MOCK_WORKFLOWS,
+  isMockId,
+} from "./mocks";
 
 export interface ListOportunidadesFilters {
   pipeline?: Pipeline;
@@ -24,6 +31,22 @@ function toQuery(params?: Record<string, unknown>): string {
   ).toString()}`;
 }
 
+function filterMocks(f?: ListOportunidadesFilters): OportunidadeListItem[] {
+  return MOCK_OPORTUNIDADES.filter((o) => {
+    if (f?.pipeline && o.pipeline !== f.pipeline) return false;
+    if (f?.status && o.status !== f.status) return false;
+    if (f?.produto && o.produto !== f.produto) return false;
+    if (f?.ownerId && o.ownerId !== f.ownerId) return false;
+    if (f?.search) {
+      const s = f.search.toLowerCase();
+      const hay =
+        `${o.conta?.nomeFantasia ?? ""} ${o.conta?.razaoSocial ?? ""} ${o.produto ?? ""}`.toLowerCase();
+      if (!hay.includes(s)) return false;
+    }
+    return true;
+  });
+}
+
 export interface AplicarDesfechoInput {
   atividadeId: string;
   resultado: "AVANCAR" | "PERMANECER" | "LOST";
@@ -37,19 +60,43 @@ export interface AplicarDesfechoInput {
 }
 
 export const oportunidadesService = {
-  list: (filters?: ListOportunidadesFilters) =>
-    api.get<OportunidadeListItem[]>(
-      `/oportunidades${toQuery(filters as Record<string, unknown> | undefined)}`,
-    ),
-  get: (id: UUID) => api.get<OportunidadeListItem>(`/oportunidades/${id}`),
-  workflow: (id: UUID) =>
-    api.get<import("../types").WorkflowAtual>(
+  list: async (filters?: ListOportunidadesFilters) => {
+    try {
+      const data = await api.get<OportunidadeListItem[]>(
+        `/oportunidades${toQuery(filters as Record<string, unknown> | undefined)}`,
+      );
+      const arr = Array.isArray(data) ? data : [];
+      // Sempre incluir mocks para permitir visualizar sem backend populado.
+      return [...arr, ...filterMocks(filters)];
+    } catch {
+      return filterMocks(filters);
+    }
+  },
+  get: async (id: UUID) => {
+    if (isMockId(id)) {
+      const m = MOCK_OPORTUNIDADES.find((o) => o.id === id);
+      if (m) return m;
+    }
+    try {
+      return await api.get<OportunidadeListItem>(`/oportunidades/${id}`);
+    } catch (err) {
+      const m = MOCK_OPORTUNIDADES.find((o) => o.id === id);
+      if (m) return m;
+      throw err;
+    }
+  },
+  workflow: async (id: UUID) => {
+    if (isMockId(id) && MOCK_WORKFLOWS[id]) return MOCK_WORKFLOWS[id];
+    return api.get<import("../types").WorkflowAtual>(
       `/oportunidades/${id}/workflow`,
-    ),
-  timeline: (id: UUID) =>
-    api.get<import("../types").TimelineItem[]>(
+    );
+  },
+  timeline: async (id: UUID) => {
+    if (isMockId(id)) return MOCK_TIMELINE[id] ?? [];
+    return api.get<import("../types").TimelineItem[]>(
       `/oportunidades/${id}/timeline`,
-    ),
+    );
+  },
   aplicarDesfecho: (id: UUID, input: AplicarDesfechoInput) =>
     api.post<OportunidadeListItem>(`/oportunidades/${id}/desfecho`, input),
 };
