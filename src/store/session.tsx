@@ -31,15 +31,6 @@ const SessionContext = createContext<SessionContextValue | null>(null);
 
 const TOKEN_KEY = "alias.crm.accessToken";
 
-function readInitialToken(): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    return window.localStorage.getItem(TOKEN_KEY);
-  } catch {
-    return null;
-  }
-}
-
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SessionState>({
     user: null,
