@@ -24,10 +24,32 @@ function toQuery(params?: Record<string, unknown>): string {
   ).toString()}`;
 }
 
+export interface AplicarDesfechoInput {
+  atividadeId: string;
+  resultado: "AVANCAR" | "PERMANECER" | "LOST";
+  concluirAtividade?: boolean;
+  criarFollowUp?: boolean;
+  criarFollowNegociacao?: boolean;
+  dataRetorno?: string;
+  metadata?: Record<string, unknown>;
+  dadosQualificacao?: Record<string, unknown>;
+  motivoPerda?: string;
+}
+
 export const oportunidadesService = {
   list: (filters?: ListOportunidadesFilters) =>
     api.get<OportunidadeListItem[]>(
       `/oportunidades${toQuery(filters as Record<string, unknown> | undefined)}`,
     ),
   get: (id: UUID) => api.get<OportunidadeListItem>(`/oportunidades/${id}`),
+  workflow: (id: UUID) =>
+    api.get<import("../types").WorkflowAtual>(
+      `/oportunidades/${id}/workflow`,
+    ),
+  timeline: (id: UUID) =>
+    api.get<import("../types").TimelineItem[]>(
+      `/oportunidades/${id}/timeline`,
+    ),
+  aplicarDesfecho: (id: UUID, input: AplicarDesfechoInput) =>
+    api.post<OportunidadeListItem>(`/oportunidades/${id}/desfecho`, input),
 };
