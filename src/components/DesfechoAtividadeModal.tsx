@@ -379,6 +379,8 @@ export function DesfechoAtividadeModal({
   const [dataRetorno, setDataRetorno] = useState("");
   const [dataError, setDataError] = useState<string | null>(null);
   const [sondagem, setSondagem] = useState<SondagemState>(SONDAGEM_INICIAL);
+  const [ufsSel, setUfsSel] = useState<string[]>([]);
+  const [ufsError, setUfsError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -392,6 +394,8 @@ export function DesfechoAtividadeModal({
     setDataRetorno("");
     setDataError(null);
     setSondagem(SONDAGEM_INICIAL);
+    setUfsSel([]);
+    setUfsError(null);
     setError(null);
     setSubmitting(false);
   }
