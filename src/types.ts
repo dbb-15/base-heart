@@ -236,7 +236,51 @@ export interface Registradora {
   id: UUID;
   nome: string;
   cnpj?: string;
+  nomeEmpresarial?: string | null;
+  nomeFantasia?: string | null;
+  tipo?: "MATRIZ" | "FILIAL" | null;
+  dataAbertura?: string | null;
+  porte?: string | null;
+  situacaoCadastral?: string | null;
+  cnaePrincipalCodigo?: string | null;
+  cnaePrincipalDescricao?: string | null;
+  cnaesSecundarios?: string | null;
+  naturezaJuridicaCodigo?: string | null;
+  naturezaJuridicaDescricao?: string | null;
+  cep?: string | null;
+  logradouro?: string | null;
+  numero?: string | null;
+  complemento?: string | null;
+  bairro?: string | null;
+  municipio?: string | null;
+  uf?: string | null;
+  email?: string | null;
+  telefone?: string | null;
+  dataSituacaoCadastral?: string | null;
+  motivoSituacaoCadastral?: string | null;
+  efr?: string | null;
+  situacaoEspecial?: string | null;
+  dataSituacaoEspecial?: string | null;
+  deletedAt?: string | null;
 }
+
+export interface Usuario {
+  id: UUID;
+  nome: string;
+  email: string;
+  role: Role;
+  ativo: boolean;
+}
+
+export interface Cadencia {
+  primeiroContatoDias: number;
+  retornoEmailDias: number;
+  retornoPropostaDias: number;
+  negociacaoDias: number;
+  recuperacaoLeadDias: number;
+  standbyExpansaoDias: number;
+}
+
 
 export interface Paginated<T> {
   items: T[];
