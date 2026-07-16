@@ -180,7 +180,15 @@ export function OportunidadeDetailPage() {
                 onToggle={toggleAtividade}
               />
             ) : null}
-            {tab === "notas" ? <NotasTab notas={notas} /> : null}
+            {tab === "notas" ? (
+              <NotasTab
+                notas={notas}
+                contaId={opp?.contaId}
+                onChanged={() =>
+                  id && notasService.list(id).then(setNotas).catch(() => {})
+                }
+              />
+            ) : null}
             {tab === "historico" ? <HistoricoTab items={timeline} /> : null}
             {tab === "detalhes" && opp ? <DetalhesTab opp={opp} /> : null}
           </section>
