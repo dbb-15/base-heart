@@ -29,7 +29,7 @@ function Router() {
   if (route.path === "/operacoes") return <OperacoesPage />;
   if (route.path === "/atividades") return <AtividadesPage />;
   if (route.path === "/admin") return <AdminPage />;
-  if (route.path === "/admin/registradoras") return <RegistradorasPage />;
+  if (route.path === "/admin/registradoras") return <AdminPage />;
   if (route.path === "/configuracoes") return <ConfiguracoesPage />;
   if (matchRoute("/oportunidades/:id", route)) return <OportunidadeDetailPage />;
   if (matchRoute("/contas/:id", route)) return <ContaDetailPage />;
