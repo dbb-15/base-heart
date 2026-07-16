@@ -41,6 +41,10 @@ export interface Conta {
   documento?: string;
 }
 
+export type Pipeline = "AQUISICAO" | "EXPANSAO" | "OPERACOES";
+export type Produto = "E_REGISTRO" | "E_BUSCAR";
+export type StatusOportunidade = "ABERTA" | "CLOSED_WON" | "CLOSED_LOST";
+
 export interface Oportunidade {
   id: UUID;
   contaId: UUID;
@@ -48,6 +52,32 @@ export interface Oportunidade {
   etapa: string;
   valor?: number;
   criadaEm: ISODate;
+}
+
+export interface OwnerRef {
+  id: UUID;
+  nome: string;
+}
+
+export interface ContaRef {
+  id: UUID;
+  nomeFantasia?: string | null;
+  razaoSocial?: string | null;
+}
+
+export interface OportunidadeListItem {
+  id: UUID;
+  pipeline: Pipeline;
+  produto?: Produto | null;
+  estagio: string;
+  status: StatusOportunidade;
+  valorEstimadoMensal?: number | null;
+  previsaoFechamento?: ISODate | null;
+  conta?: ContaRef | null;
+  owner?: OwnerRef | null;
+  ownerId?: UUID | null;
+  contaId: UUID;
+  criadaEm?: ISODate;
 }
 
 export interface Atividade {
