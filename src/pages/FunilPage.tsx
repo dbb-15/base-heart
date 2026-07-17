@@ -272,30 +272,7 @@ export function FunilPage({
       ) : (
         <div className="flex gap-4 overflow-x-auto pb-4">
           {columns.map((col) => (
-            <div
-              key={col.key}
-              className="flex w-72 shrink-0 flex-col rounded-xl border border-border bg-background p-3"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground">
-                  {col.label}
-                </h2>
-                <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground">
-                  {col.opps.length}
-                </span>
-              </div>
-              <div className="flex flex-col gap-2">
-                {col.opps.length === 0 ? (
-                  <p className="rounded-md border border-dashed border-border/60 px-3 py-6 text-center text-xs text-muted-foreground">
-                    Nenhuma oportunidade
-                  </p>
-                ) : (
-                  col.opps.map((opp) => (
-                    <OpportunityCard key={opp.id} opp={opp} />
-                  ))
-                )}
-              </div>
-            </div>
+            <FunnelColumn key={col.key} label={col.label} opps={col.opps} />
           ))}
         </div>
       )}
@@ -321,6 +298,52 @@ function tipoExpansaoBadge(t?: TipoExpansao | null) {
     <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
       {label}
     </span>
+  );
+}
+
+const PAGE_SIZE = 10;
+
+function FunnelColumn({
+  label,
+  opps,
+}: {
+  label: string;
+  opps: OportunidadeListItem[];
+}) {
+  const [visible, setVisible] = useState(PAGE_SIZE);
+  const shown = opps.slice(0, visible);
+  const remaining = opps.length - shown.length;
+  return (
+    <div className="flex w-60 shrink-0 flex-col rounded-xl border border-border bg-background p-3">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-foreground">{label}</h2>
+        <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground">
+          {opps.length}
+        </span>
+      </div>
+      <div className="flex flex-col gap-2">
+        {opps.length === 0 ? (
+          <p className="rounded-md border border-dashed border-border/60 px-3 py-6 text-center text-xs text-muted-foreground">
+            Nenhuma oportunidade
+          </p>
+        ) : (
+          <>
+            {shown.map((opp) => (
+              <OpportunityCard key={opp.id} opp={opp} />
+            ))}
+            {remaining > 0 ? (
+              <button
+                type="button"
+                onClick={() => setVisible((v) => v + PAGE_SIZE)}
+                className="mt-1 rounded-md border border-border bg-card px-2 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:border-primary"
+              >
+                Carregar mais ({remaining})
+              </button>
+            ) : null}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
