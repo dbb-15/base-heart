@@ -227,7 +227,7 @@ export function FunilPage({
           onChange={(e) =>
             setFilters((f) => ({ ...f, search: e.target.value }))
           }
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
         <select
           value={filters.produto}
@@ -237,7 +237,7 @@ export function FunilPage({
               produto: e.target.value as "" | Produto,
             }))
           }
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm shadow-sm"
         >
           <option value="">Todos os produtos</option>
           <option value="E_REGISTRO">e-Registro</option>
@@ -248,7 +248,7 @@ export function FunilPage({
           onChange={(e) =>
             setFilters((f) => ({ ...f, ownerId: e.target.value }))
           }
-          className="rounded-lg border border-border bg-background px-3 py-2 text-sm shadow-sm"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm shadow-sm"
         >
           <option value="">Todos os owners</option>
           {owners.map((o) => (
