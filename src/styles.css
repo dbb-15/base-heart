@@ -62,20 +62,20 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.25rem;
 
-  /* Alias CRM design system — enterprise minimal */
-  --background: #F7F7F5;         /* page background */
-  --foreground: #4E4E4C;         /* body text */
-  --card: #FFFFFF;               /* surface */
+  /* Alias CRM design system — enterprise minimal (grayscale) */
+  --background: #F7F7F5;
+  --foreground: #4E4E4C;
+  --card: #FFFFFF;
   --card-foreground: #4E4E4C;
   --popover: #FFFFFF;
   --popover-foreground: #4E4E4C;
 
-  --primary: #95C23D;            /* brand green */
+  --primary: #4E4E4C;
   --primary-foreground: #FFFFFF;
 
-  --secondary: #F7F7F5;
+  --secondary: #F1F1EE;
   --secondary-foreground: #4E4E4C;
 
   --muted: #F7F7F5;
@@ -89,22 +89,22 @@
 
   --border: #E8E8E6;
   --input: #E8E8E6;
-  --ring: #95C23D;
+  --ring: #B8B8B4;
 
-  --chart-1: #95C23D;
-  --chart-2: #4E4E4C;
+  --chart-1: #4E4E4C;
+  --chart-2: #8A8A87;
   --chart-3: #B8B8B4;
   --chart-4: #D14343;
   --chart-5: #E8E8E6;
 
-  --sidebar: #FFFFFF;
+  --sidebar: #F7F7F5;
   --sidebar-foreground: #4E4E4C;
-  --sidebar-primary: #95C23D;
+  --sidebar-primary: #4E4E4C;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F1F1EE;
+  --sidebar-accent: #E8E8E6;
   --sidebar-accent-foreground: #4E4E4C;
   --sidebar-border: #E8E8E6;
-  --sidebar-ring: #95C23D;
+  --sidebar-ring: #B8B8B4;
 }
 
 @theme inline {
