@@ -83,7 +83,7 @@ export function BasePage() {
         }
       />
 
-      <div className="mb-4 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-3">
+      <div className="mb-4 flex flex-wrap items-end gap-3">
         <div className="min-w-[220px] flex-1">
           <label className="mb-1 block text-[10px] uppercase tracking-wide text-muted-foreground">
             Buscar
@@ -92,9 +92,10 @@ export function BasePage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Razão social, fantasia ou CNPJ…"
-            className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary/40"
           />
         </div>
+
         <FilterSelect
           label="Status"
           value={status}

@@ -57,17 +57,24 @@ export function Sidebar() {
       <button
         key={it.path}
         onClick={() => navigate(it.path)}
-        className={`mb-0.5 flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors ${
+        className={`relative mb-0.5 flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors ${
           active
-            ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+            ? "bg-sidebar-accent text-sidebar-primary font-medium"
             : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
         }`}
       >
-        <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+        {active && (
+          <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r bg-sidebar-primary" />
+        )}
+        <Icon
+          className={`h-4 w-4 shrink-0 ${active ? "text-sidebar-primary" : ""}`}
+          strokeWidth={1.75}
+        />
         <span className="truncate">{it.label}</span>
       </button>
     );
   };
+
 
   return (
     <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
