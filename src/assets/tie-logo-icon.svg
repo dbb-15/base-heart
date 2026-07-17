@@ -1,0 +1,13 @@
+<svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>TIE</title>
+  <rect x="20" y="20" width="220" height="220" rx="40" fill="#146B57"/>
+  <g transform="translate(23.5,70) scale(0.3)">
+    <polygon points="40,50 130,67.14 130,332.86 40,350" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+    <polygon points="130,67.14 220,84.29 220,315.71 130,332.86" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+    <polygon points="220,84.29 310,101.43 310,298.57 220,315.71" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+    <polygon points="310,101.43 400,101.43 400,298.57 310,298.57" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+    <polygon points="400,101.43 490,84.29 490,315.71 400,298.57" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+    <polygon points="490,84.29 580,67.14 580,332.86 490,315.71" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+    <polygon points="580,67.14 670,50 670,350 580,332.86" fill="#FFFFFF" stroke="#146B57" stroke-width="8"/>
+  </g>
+</svg>
