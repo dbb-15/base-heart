@@ -90,31 +90,24 @@ export function Sidebar() {
         collapsed ? "w-16" : "w-60"
       }`}
     >
-      <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center" : "justify-between pl-4 pr-2"}`}>
+      <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-between px-2" : "justify-between pl-4 pr-2"}`}>
         {collapsed ? (
           <img src={logoIcon} alt="TIE" className="h-16 w-auto" />
         ) : (
           <img src={logoFull} alt="TIE" className="h-16 w-auto" />
         )}
-        {!collapsed && (
-          <button
-            onClick={() => setCollapsed(true)}
-            className="rounded-sm p-1.5 text-muted-foreground hover:bg-sidebar-accent/60"
-            title="Recolher"
-          >
-            <PanelLeftClose className="h-4 w-4" strokeWidth={1.75} />
-          </button>
-        )}
-      </div>
-      {collapsed && (
         <button
-          onClick={() => setCollapsed(false)}
-          className="mx-2 mb-2 flex items-center justify-center rounded-sm p-1.5 text-muted-foreground hover:bg-sidebar-accent/60"
-          title="Expandir"
+          onClick={() => setCollapsed(!collapsed)}
+          className="rounded-sm p-1.5 text-muted-foreground hover:bg-sidebar-accent/60"
+          title={collapsed ? "Expandir" : "Recolher"}
         >
-          <PanelLeftOpen className="h-4 w-4" strokeWidth={1.75} />
+          {collapsed ? (
+            <PanelLeftOpen className="h-4 w-4" strokeWidth={1.75} />
+          ) : (
+            <PanelLeftClose className="h-4 w-4" strokeWidth={1.75} />
+          )}
         </button>
-      )}
+      </div>
 
       <nav className="flex-1 overflow-y-auto px-3">
         {!collapsed && (
