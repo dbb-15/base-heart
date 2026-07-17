@@ -211,7 +211,7 @@ export function FunilPage({
               }`}
             >
               {v.label}
-              <span className="ml-2 rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+              <span className="ml-2 rounded-full border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted-foreground">
                 {items.filter(v.filter).length}
               </span>
             </button>
@@ -274,7 +274,7 @@ export function FunilPage({
           {columns.map((col) => (
             <div
               key={col.key}
-              className="flex w-72 shrink-0 flex-col rounded-xl border border-border bg-muted/40 p-3"
+              className="flex w-72 shrink-0 flex-col rounded-xl border border-border bg-background p-3"
             >
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-foreground">
