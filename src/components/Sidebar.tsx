@@ -1,4 +1,5 @@
 // Sidebar com itens filtrados por RBAC.
+import { useState } from "react";
 import {
   Home,
   Building2,
@@ -10,12 +11,16 @@ import {
   Settings,
   Shield,
   LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
   type LucideIcon,
 } from "lucide-react";
 import type { Role } from "../types";
 import { NAV_LABEL } from "../labels";
 import { useHashRoute } from "../hooks/useHashRoute";
 import { useSession } from "../store/session";
+import logoFull from "../assets/tie-logo-full.svg";
+import logoIcon from "../assets/tie-logo-icon.svg";
 
 interface NavItem {
   path: string;
@@ -42,6 +47,7 @@ const OTHERS: NavItem[] = [
 export function Sidebar() {
   const { user, logout } = useSession();
   const { path, navigate } = useHashRoute();
+  const [collapsed, setCollapsed] = useState(false);
   if (!user) return null;
 
   const isActive = (p: string) =>
@@ -57,7 +63,10 @@ export function Sidebar() {
       <button
         key={it.path}
         onClick={() => navigate(it.path)}
+        title={collapsed ? it.label : undefined}
         className={`relative mb-0.5 flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors ${
+          collapsed ? "justify-center" : ""
+        } ${
           active
             ? "bg-sidebar-accent text-sidebar-primary font-medium"
             : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
@@ -70,40 +79,73 @@ export function Sidebar() {
           className={`h-4 w-4 shrink-0 ${active ? "text-sidebar-primary" : ""}`}
           strokeWidth={1.75}
         />
-        <span className="truncate">{it.label}</span>
+        {!collapsed && <span className="truncate">{it.label}</span>}
       </button>
     );
   };
 
-
   return (
-    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-      <div className="px-5 py-5">
-        <div className="text-[15px] font-semibold tracking-tight">Alias CRM</div>
+    <aside
+      className={`sticky top-0 flex h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 ${
+        collapsed ? "w-16" : "w-60"
+      }`}
+    >
+      <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center" : "justify-between pl-4 pr-2"}`}>
+        {collapsed ? (
+          <img src={logoIcon} alt="TIE" className="h-8 w-8" />
+        ) : (
+          <img src={logoFull} alt="TIE" className="h-9 w-auto" />
+        )}
+        {!collapsed && (
+          <button
+            onClick={() => setCollapsed(true)}
+            className="rounded-sm p-1.5 text-muted-foreground hover:bg-sidebar-accent/60"
+            title="Recolher"
+          >
+            <PanelLeftClose className="h-4 w-4" strokeWidth={1.75} />
+          </button>
+        )}
       </div>
+      {collapsed && (
+        <button
+          onClick={() => setCollapsed(false)}
+          className="mx-2 mb-2 flex items-center justify-center rounded-sm p-1.5 text-muted-foreground hover:bg-sidebar-accent/60"
+          title="Expandir"
+        >
+          <PanelLeftOpen className="h-4 w-4" strokeWidth={1.75} />
+        </button>
+      )}
 
       <nav className="flex-1 overflow-y-auto px-3">
-        <div className="mb-2 px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-          Menu principal
-        </div>
+        {!collapsed && (
+          <div className="mb-2 px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+            Menu principal
+          </div>
+        )}
         {filter(MAIN).map(renderItem)}
 
-        {filter(OTHERS).length > 0 && (
+        {filter(OTHERS).length > 0 && !collapsed && (
           <div className="mb-2 mt-6 px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
             Outros
           </div>
         )}
+        {collapsed && filter(OTHERS).length > 0 && <div className="my-3 border-t border-sidebar-border" />}
         {filter(OTHERS).map(renderItem)}
       </nav>
 
       <div className="border-t border-sidebar-border p-3">
-        <div className="mb-2 px-3 text-xs text-muted-foreground truncate">{user.nome}</div>
+        {!collapsed && (
+          <div className="mb-2 px-3 text-xs text-muted-foreground truncate">{user.nome}</div>
+        )}
         <button
           onClick={() => logout()}
-          className="flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent/60"
+          title={collapsed ? "Sair" : undefined}
+          className={`flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent/60 ${
+            collapsed ? "justify-center" : ""
+          }`}
         >
           <LogOut className="h-4 w-4" strokeWidth={1.75} />
-          Sair
+          {!collapsed && "Sair"}
         </button>
       </div>
     </aside>
