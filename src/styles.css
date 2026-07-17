@@ -72,7 +72,7 @@
   --popover: #FFFFFF;
   --popover-foreground: #4E4E4C;
 
-  --primary: #4E4E4C;
+  --primary: #099078;
   --primary-foreground: #FFFFFF;
 
   --secondary: #F1F1EE;
@@ -89,23 +89,24 @@
 
   --border: #E8E8E6;
   --input: #E8E8E6;
-  --ring: #B8B8B4;
+  --ring: #099078;
 
-  --chart-1: #4E4E4C;
+  --chart-1: #099078;
   --chart-2: #8A8A87;
   --chart-3: #B8B8B4;
   --chart-4: #D14343;
   --chart-5: #E8E8E6;
 
-  --sidebar: #F7F7F5;
+  --sidebar: #FFFFFF;
   --sidebar-foreground: #4E4E4C;
-  --sidebar-primary: #4E4E4C;
+  --sidebar-primary: #099078;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E8E8E6;
+  --sidebar-accent: #F1F1EE;
   --sidebar-accent-foreground: #4E4E4C;
   --sidebar-border: #E8E8E6;
-  --sidebar-ring: #B8B8B4;
+  --sidebar-ring: #099078;
 }
+
 
 @theme inline {
   --font-sans:
