@@ -92,9 +92,9 @@ export function Sidebar() {
     >
       <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center" : "justify-between pl-4 pr-2"}`}>
         {collapsed ? (
-          <img src={logoIcon} alt="TIE" className="h-8 w-8" />
+          <img src={logoIcon} alt="TIE" className="h-12 w-12" />
         ) : (
-          <img src={logoFull} alt="TIE" className="h-9 w-auto" />
+          <img src={logoFull} alt="TIE" className="h-16 w-auto" />
         )}
         {!collapsed && (
           <button
