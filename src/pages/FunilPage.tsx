@@ -272,30 +272,7 @@ export function FunilPage({
       ) : (
         <div className="flex gap-4 overflow-x-auto pb-4">
           {columns.map((col) => (
-            <div
-              key={col.key}
-              className="flex w-72 shrink-0 flex-col rounded-xl border border-border bg-background p-3"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground">
-                  {col.label}
-                </h2>
-                <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground">
-                  {col.opps.length}
-                </span>
-              </div>
-              <div className="flex flex-col gap-2">
-                {col.opps.length === 0 ? (
-                  <p className="rounded-md border border-dashed border-border/60 px-3 py-6 text-center text-xs text-muted-foreground">
-                    Nenhuma oportunidade
-                  </p>
-                ) : (
-                  col.opps.map((opp) => (
-                    <OpportunityCard key={opp.id} opp={opp} />
-                  ))
-                )}
-              </div>
-            </div>
+            <FunnelColumn key={col.key} label={col.label} opps={col.opps} />
           ))}
         </div>
       )}
