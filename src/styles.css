@@ -66,23 +66,23 @@
 
   /* Alias CRM design system — enterprise minimal (grayscale) */
   --background: #F7F7F5;
-  --foreground: #4E4E4C;
+  --foreground: #3D3D3B;
   --card: #FFFFFF;
-  --card-foreground: #4E4E4C;
+  --card-foreground: #3D3D3B;
   --popover: #FFFFFF;
-  --popover-foreground: #4E4E4C;
+  --popover-foreground: #3D3D3B;
 
   --primary: #099078;
   --primary-foreground: #FFFFFF;
 
   --secondary: #F1F1EE;
-  --secondary-foreground: #4E4E4C;
+  --secondary-foreground: #3D3D3B;
 
   --muted: #F7F7F5;
-  --muted-foreground: #8A8A87;
+  --muted-foreground: #6E6E6B;
 
   --accent: #F1F1EE;
-  --accent-foreground: #4E4E4C;
+  --accent-foreground: #3D3D3B;
 
   --destructive: #D14343;
   --destructive-foreground: #FFFFFF;
