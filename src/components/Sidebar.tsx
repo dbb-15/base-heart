@@ -90,7 +90,7 @@ export function Sidebar() {
         collapsed ? "w-16" : "w-60"
       }`}
     >
-      <div className={`flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center px-2" : "justify-between pl-4 pr-2"}`}>
+      <div className={`relative flex items-center gap-2 px-3 py-4 ${collapsed ? "justify-center px-2" : "justify-between pl-4 pr-2"}`}>
         {collapsed ? (
           <img src={logoIcon} alt="TIE" className="h-16 w-auto" />
         ) : (
@@ -100,7 +100,7 @@ export function Sidebar() {
           onClick={() => setCollapsed(!collapsed)}
           className={`rounded-sm p-1.5 text-muted-foreground transition-all hover:bg-sidebar-accent/60 ${
             collapsed
-              ? "pointer-events-none absolute right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full border border-sidebar-border bg-sidebar shadow-sm opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
+              ? "pointer-events-none absolute right-2 top-4 h-7 w-7 rounded-full border border-sidebar-border bg-sidebar shadow-sm opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
               : ""
           }`}
           title={collapsed ? "Expandir" : "Recolher"}
