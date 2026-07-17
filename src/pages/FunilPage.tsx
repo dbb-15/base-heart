@@ -314,14 +314,14 @@ function FunnelColumn({
   const shown = opps.slice(0, visible);
   const remaining = opps.length - shown.length;
   return (
-    <div className="flex w-60 shrink-0 flex-col rounded-xl border border-border bg-background p-3">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="flex h-[calc(100vh-220px)] w-60 shrink-0 flex-col rounded-xl border border-border bg-background p-3">
+      <div className="mb-3 flex shrink-0 items-center justify-between">
         <h2 className="text-sm font-semibold text-foreground">{label}</h2>
         <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground">
           {opps.length}
         </span>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-1">
         {opps.length === 0 ? (
           <p className="rounded-md border border-dashed border-border/60 px-3 py-6 text-center text-xs text-muted-foreground">
             Nenhuma oportunidade
